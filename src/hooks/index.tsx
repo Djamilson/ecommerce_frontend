@@ -1,7 +1,7 @@
 import React from 'react';
 
+import { CartProduct } from './cartProduct';
 import { LoadingProvider } from './loading';
-import { CartProduct } from './product';
 import { ToastProvider } from './toast';
 
 const AppProvider: React.FC = ({ children }) => {
