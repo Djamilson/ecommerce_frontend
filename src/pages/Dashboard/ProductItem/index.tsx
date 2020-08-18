@@ -17,12 +17,7 @@ export interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const {
-    addProduct,
-    product: item,
-    removeProduct,
-    updateUser,
-  } = useCartProduct();
+  const { cart, totalValue, addProduct, removeProduct } = useCartProduct();
 
   const addItemA = useCallback(
     async (productItem: Product) => {
@@ -30,13 +25,11 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         product: productItem,
       });
 
-      await updateUser(productItem);
-
       await removeProduct({
         product: productItem,
       });
     },
-    [addProduct, updateUser, removeProduct],
+    [addProduct, removeProduct],
   );
 
   const addItem = useCallback(async (productItem: Product) => {

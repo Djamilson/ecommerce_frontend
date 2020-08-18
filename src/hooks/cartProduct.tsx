@@ -83,23 +83,41 @@ import React, {
 import { Product, ProductItemProps } from '../pages/Dashboard/ProductItem';
 
 interface CartContextData {
-  product: Product;
+  cart: Product[];
+  totalItens: number;
+  totalValue: number;
   addProduct(itemProduct: ProductItemProps): Promise<void>;
   removeProduct(itemProduct: ProductItemProps): Promise<void>;
-  updateUser(product: Product): void;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 const CartProduct: React.FC = ({ children }) => {
-  const [data, setData] = useState<Product>(() => {
-    return {} as Product;
+  /* const [data, setData] = useState<Product>((list: Product[]) => {
+    const productList = localStorage.getItem('@list:product');
+
+    if (productList) {
+      return {
+        cart: JSON.parse(productList),
+      };
+    }
+
+    return [] as Product[];
+  }); */
+
+  // const [cart, setCart] = useState<Product[]>([]);
+  const [cart, setCart] = useState<Product[]>(() => {
+    const productList = localStorage.getItem('@list:product');
+
+    if (productList) {
+      return JSON.parse(productList);
+    }
+
+    return [] as Product[];
   });
 
-  const [cart, setCart] = useState<Product[]>([]);
   const [totalValue, setTotalValue] = useState(0);
-
-  const [products, setProducts] = useState<Product[]>([]);
+  const [totalItens, setTotalItens] = useState(0);
 
   useEffect(() => {
     let value = 0;
@@ -108,13 +126,19 @@ const CartProduct: React.FC = ({ children }) => {
     });
 
     setTotalValue(value);
+    setTotalItens(cart.length);
   }, []);
 
   const addProduct = useCallback(async ({ product }) => {
     console.log('Hook vou add esse this:', product);
 
     const newCart = cart;
+
     newCart.push(product);
+
+    // newCart.find((p) => p.id === product.id);
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
 
     setCart([...newCart]);
 
@@ -133,20 +157,21 @@ const CartProduct: React.FC = ({ children }) => {
     // console.log('=>> Lista de products: ', products);
   }, []);
 
-  const updateUser = useCallback(
+  /* const updateUser = useCallback(
     (product: Product) => {
-      setData(product);
+      // setData(product);
     },
     [setData],
   );
-
+*/
   return (
     <CartContext.Provider
       value={{
-        product: data,
+        cart,
+        totalValue,
+        totalItens,
         addProduct,
         removeProduct,
-        updateUser,
       }}
     >
       {children}

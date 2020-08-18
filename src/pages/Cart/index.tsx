@@ -6,9 +6,18 @@ import {
 } from 'react-icons/md';
 
 import Header from '../../components/Header';
+import { useCartProduct } from '../../hooks/cartProduct';
 import { Container, Content, ProductTable, Total } from './styles';
 
 const Cart: React.FC = () => {
+  const {
+    cart,
+    totalValue,
+    addProduct,
+
+    removeProduct,
+  } = useCartProduct();
+
   return (
     <Container>
       <Header />
@@ -23,39 +32,38 @@ const Cart: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <img
-                  src="https://static.netshoes.com.br/produtos/tenis-adidas-sensebounce-street-masculino/42/COL-6968-742/COL-6968-742_zoom2.jpg?ts=1584624351&ims=326x"
-                  alt="Tenis"
-                />
-              </td>
-              <td>
-                <strong>Tênis muito massa</strong>
-                <span>R$ 129,90</span>
-              </td>
-              <td>
-                <div>
-                  <button type="button">
-                    <MdRemoveCircleOutline size={20} color="#7159c1" />
-                  </button>
+            {cart.map((item) => (
+              <tr key={item.id}>
+                <td>
+                  <img src={item.image} alt={item.title} />
+                </td>
+                <td>
+                  <strong>{item.title}</strong>
+                  <span>{item.priceFormatted}</span>
+                </td>
+                <td>
+                  <div>
+                    <button type="button">
+                      <MdRemoveCircleOutline size={20} color="#7159c1" />
+                    </button>
 
-                  <input type="number" readOnly value={1} />
+                    <input type="number" readOnly value={1} />
 
+                    <button type="button">
+                      <MdAddCircleOutline size={20} color="#7159c1" />
+                    </button>
+                  </div>
+                </td>
+                <td>
+                  <strong>R$ 258,00</strong>
+                </td>
+                <td>
                   <button type="button">
-                    <MdAddCircleOutline size={20} color="#7159c1" />
+                    <MdDelete size={20} color="#7159c1" />
                   </button>
-                </div>
-              </td>
-              <td>
-                <strong>R$ 258,00</strong>
-              </td>
-              <td>
-                <button type="button">
-                  <MdDelete size={20} color="#7159c1" />
-                </button>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </ProductTable>
 

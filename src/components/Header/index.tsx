@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiPower, FiClock } from 'react-icons/fi';
 import { MdShoppingBasket } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 import logoImg from '../../assets/logo.svg';
+import { useCartProduct } from '../../hooks/cartProduct';
 import { Container, HeaderContainer, Cart, Profile } from './styles';
 
 interface Props {
@@ -17,6 +18,14 @@ interface Props {
 }
 
 const Header: React.FC = () => {
+  const { totalItens, cart } = useCartProduct();
+  const [qtdade] = useState(cart.length);
+
+  useEffect(() => {
+    console.log('Quantidade: ', cart.length);
+    console.log('Hook vou add esse this:');
+  }, []);
+
   return (
     <Container>
       <HeaderContainer>
@@ -35,7 +44,7 @@ const Header: React.FC = () => {
         <Cart to="/cart">
           <div>
             <strong>Meu carrinho</strong>
-            <span>3 itens</span>
+            <span> {qtdade} itens</span>
           </div>
           <MdShoppingBasket size={36} color="#FFF" />
         </Cart>
