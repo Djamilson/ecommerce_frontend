@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { MdAddShoppingCart } from 'react-icons/md';
 
-import { useProduct } from '../../../hooks/product';
+import { useCartProduct } from '../../../hooks/cartProduct';
 import { Container } from './styles';
 
 export interface Product {
@@ -17,17 +17,26 @@ export interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const { addProduct } = useProduct();
+  const {
+    addProduct,
+    product: item,
+    removeProduct,
+    updateUser,
+  } = useCartProduct();
 
   const addItemA = useCallback(
     async (productItem: Product) => {
-      console.log('Product:', productItem);
-
       await addProduct({
         product: productItem,
       });
+
+      await updateUser(productItem);
+
+      await removeProduct({
+        product: productItem,
+      });
     },
-    [addProduct],
+    [addProduct, updateUser, removeProduct],
   );
 
   const addItem = useCallback(async (productItem: Product) => {
