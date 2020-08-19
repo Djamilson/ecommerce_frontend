@@ -14,8 +14,10 @@ interface CartContextData {
 }
 
 export interface ProductAmount {
-  amount: number;
-  product: Product;
+  itemProduct: {
+    amount: number;
+    product: Product;
+  };
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
@@ -35,9 +37,11 @@ const CartProduct: React.FC = ({ children }) => {
   const updateAmount = useCallback(async (id) => {
     const newCart = cart;
 
-    const productIndex = newCart.findIndex((p) => p.product.id === id);
+    const productIndex = newCart.findIndex(
+      (p) => p.itemProduct.product.id === id,
+    );
 
-    newCart[productIndex].amount += 1;
+    newCart[productIndex].itemProduct.amount += 1;
 
     localStorage.setItem('@list:product', JSON.stringify(newCart));
 
@@ -48,13 +52,13 @@ const CartProduct: React.FC = ({ children }) => {
     const newCart = cart;
 
     const productExists = newCart.find(
-      (p: ProductAmount) => p.product.id === id,
+      (p: ProductAmount) => p.itemProduct.product.id === id,
     );
 
     const stock = await api.get(`/stock/${id}`);
 
     const stockAmount = stock.data.amount;
-    const currentAmount = productExists ? productExists.amount : 0;
+    const currentAmount = productExists ? productExists.itemProduct.amount : 0;
 
     const amount = currentAmount + 1;
 
@@ -78,9 +82,12 @@ const CartProduct: React.FC = ({ children }) => {
       const { data } = res;
 
       const item = { amount: 1, product: data };
+
       newCart.push({
-        ...item,
-        amount: 1,
+        itemProduct: {
+          ...item,
+          amount: 1,
+        },
       });
     }
 
@@ -92,7 +99,9 @@ const CartProduct: React.FC = ({ children }) => {
   const removeProduct = useCallback(async (id) => {
     const removeCart = cart;
 
-    const productIndex = removeCart.findIndex((p) => p.product.id === id);
+    const productIndex = removeCart.findIndex(
+      (p) => p.itemProduct.product.id === id,
+    );
 
     if (productIndex >= 0) {
       removeCart.splice(productIndex, 1);
@@ -124,9 +133,11 @@ const CartProduct: React.FC = ({ children }) => {
       return;
     }
 
-    const productIndex = newCart.findIndex((p) => p.product.id === id);
+    const productIndex = newCart.findIndex(
+      (p) => p.itemProduct.product.id === id,
+    );
 
-    newCart[productIndex].amount += 1;
+    newCart[productIndex].itemProduct.amount += 1;
 
     localStorage.setItem('@list:product', JSON.stringify(newCart));
 
@@ -156,9 +167,11 @@ const CartProduct: React.FC = ({ children }) => {
       return;
     }
 
-    const productIndex = newCart.findIndex((p) => p.product.id === id);
+    const productIndex = newCart.findIndex(
+      (p) => p.itemProduct.product.id === id,
+    );
 
-    newCart[productIndex].amount -= 1;
+    newCart[productIndex].itemProduct.amount -= 1;
 
     localStorage.setItem('@list:product', JSON.stringify(newCart));
 
