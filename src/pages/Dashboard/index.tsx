@@ -17,10 +17,17 @@ const DashBoard: React.FC = () => {
     api.get('products').then((res) => {
       const productFormatted = res.data.map((product: Product) => {
         return {
-          ...product,
-          priceFormatted: formatPrice(product.price),
+          itemProduct: {
+            product: {
+              ...product,
+              priceFormatted: formatPrice(product.price),
+            },
+          },
         };
       });
+
+      console.log(productFormatted);
+
       setProducts(productFormatted);
     });
   }, []);
@@ -30,7 +37,12 @@ const DashBoard: React.FC = () => {
       <Header />
       <ProductList>
         {products.map((product: ProductAmount) => {
-          return <ProductItem key={product.product.id} product={product} />;
+          return (
+            <ProductItem
+              key={product.itemProduct.product.id}
+              itemProduct={product.itemProduct}
+            />
+          );
         })}
       </ProductList>
     </Container>
