@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { MdAddShoppingCart } from 'react-icons/md';
 
-import { useCartProduct } from '../../../hooks/cartProduct';
+import { number } from 'yup';
+
+import { ProductAmount, useCartProduct } from '../../../hooks/cartProduct';
 import { Container } from './styles';
 
 export interface Product {
@@ -16,47 +18,36 @@ export interface ProductItemProps {
   product: Product;
 }
 
-const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const {
-    addProduct,
-    product: item,
-    removeProduct,
-    updateUser,
-  } = useCartProduct();
+const ProductItem: React.FC<ProductAmount> = ({ product }) => {
+  const { addProduct, cart } = useCartProduct();
 
-  const addItemA = useCallback(
-    async (productItem: Product) => {
-      await addProduct({
-        product: productItem,
-      });
+  const amount = useMemo(
+    () =>
+      cart.reduce((sumAmount: any, item: ProductAmount) => {
+        sumAmount[item.product.id] = item.amount;
 
-      await updateUser(productItem);
-
-      await removeProduct({
-        product: productItem,
-      });
-    },
-    [addProduct, updateUser, removeProduct],
+        return sumAmount;
+      }, {}),
+    [cart],
   );
 
-  const addItem = useCallback(async (productItem: Product) => {
-    console.log('Product:', productItem);
+  const addItem = useCallback(
+    async (idProduct: number) => {
+      await addProduct(idProduct);
+    },
+    [addProduct],
+  );
 
-    // await addProduct(productItem);
-  }, []);
-  // addItem(product)
-  /* const handleSelected = useCallback((providerId: string) => {
-    setSelectedProvider(providerId);
-  }, []); */
   return (
     <Container>
-      <img src={product.image} alt={product.title} />
-      <strong>{product.title}</strong>
-      <span>{product.priceFormatted}</span>
+      <img src={product.product.image} alt={product.product.title} />
+      <strong>{product.product.title}</strong>
+      <span>{product.product.priceFormatted}</span>
 
-      <button type="button" onClick={() => addItemA(product)}>
+      <button type="button" onClick={() => addItem(product.product.id, product.amount)}>
         <div>
           <MdAddShoppingCart size={16} color="#fff" />
+          {amount[product.product.id] || 0}
         </div>
         <span>ADICIONAR AO CARRINHO</span>
       </button>

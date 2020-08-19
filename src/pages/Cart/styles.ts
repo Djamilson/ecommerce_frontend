@@ -56,6 +56,7 @@ export const ProductTable = styled.table`
   }
 
   span {
+    color: #333;
     display: block;
     margin-top: 5px;
     font-size: 18px;

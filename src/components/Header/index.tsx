@@ -1,22 +1,17 @@
-import React from 'react';
-import { FiPower, FiClock } from 'react-icons/fi';
+import React, { useMemo } from 'react';
+import { FiPower } from 'react-icons/fi';
 import { MdShoppingBasket } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
 import logoImg from '../../assets/logo.svg';
+import { useCartProduct } from '../../hooks/cartProduct';
 import { Container, HeaderContainer, Cart, Profile } from './styles';
 
-interface Props {
-  id: string;
-  date: string;
-  hourFormatted: string;
-  user: {
-    name: string;
-    avatar_url: string;
-  };
-}
-
 const Header: React.FC = () => {
+  const { cart } = useCartProduct();
+
+  const qtdade = useMemo(() => cart.length, [cart]);
+
   return (
     <Container>
       <HeaderContainer>
@@ -35,7 +30,7 @@ const Header: React.FC = () => {
         <Cart to="/cart">
           <div>
             <strong>Meu carrinho</strong>
-            <span>3 itens</span>
+            <span> {qtdade} itens</span>
           </div>
           <MdShoppingBasket size={36} color="#FFF" />
         </Cart>

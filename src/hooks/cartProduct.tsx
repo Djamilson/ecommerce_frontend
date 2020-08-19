@@ -1,152 +1,179 @@
-/* import React, { createContext, useCallback, useState, useContext } from 'react';
+import React, { createContext, useCallback, useState, useContext } from 'react';
 
-import { Product, ProductItemProps } from '../pages/Dashboard/ProductItem';
-
-interface ProductState {
-  product: Product;
-}
-
-interface ProductStateList {
-  product?: Product[];
-}
-
-interface ProductContextData {
-  product: Product;
-  list: Product[];
-  addProduct(dataProduct: ProductItemProps): Promise<void>;
-  removeProduct(dataProduct: ProductItemProps): Promise<void>;
-}
-
-const ProductContext = createContext<ProductContextData>(
-  {} as ProductContextData,
-);
-
-const CartProduct: React.FC = ({ children }) => {
-  const [data, setData] = useState([]);
-  const [count, setCount] = useState(0);
-  const [item, setItem] = useState<Product>({} as Product);
-
-  const [products, setProducts] = useState<Product[]>([]);
-
-  const addProduct = useCallback(async ({ product }) => {
-    console.log('Estou no hook add:', product);
-    setItem(product);
-
-    setCount(count + 1);
-
-    setProducts(product);
-    setData(product);
-  }, []);
-
-  const removeProduct = useCallback(async ({ product }) => {
-    console.log('Estou no hook Removendo product', product);
-    console.log('Lista de product: ', products);
-    console.log('Lista de product: ', data);
-    console.log('count: ', count);
-  }, []);
-
-  return (
-    <ProductContext.Provider
-      value={{
-        product: item,
-        list: products,
-        addProduct,
-        removeProduct,
-      }}
-    >
-      {children}
-    </ProductContext.Provider>
-  );
-};
-
-function useProduct(): ProductContextData {
-  const context = useContext(ProductContext);
-
-  if (!context) {
-    throw new Error('useCart mus be used within an CartProduct');
-  }
-
-  return context;
-}
-
-export { CartProduct, useProduct };
-*/
-
-import React, {
-  createContext,
-  useCallback,
-  useState,
-  useContext,
-  useEffect,
-} from 'react';
-
-import { Product, ProductItemProps } from '../pages/Dashboard/ProductItem';
+import api from '../_services/api';
+import { Product } from '../pages/Dashboard/ProductItem';
+import { useToast } from './toast';
 
 interface CartContextData {
+  cart: ProductAmount[];
+  addProduct(id: number): Promise<void>;
+  removeProduct(index: number): Promise<void>;
+
+  incrementAmount(index: number, amount: number): Promise<void>;
+  decrementAmount(index: number, amount: number): Promise<void>;
+}
+
+export interface ProductAmount {
+  amount: number;
   product: Product;
-  addProduct(itemProduct: ProductItemProps): Promise<void>;
-  removeProduct(itemProduct: ProductItemProps): Promise<void>;
-  updateUser(product: Product): void;
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData);
 
 const CartProduct: React.FC = ({ children }) => {
-  const [data, setData] = useState<Product>(() => {
-    return {} as Product;
+  const { addToast } = useToast();
+  const [cart, setCart] = useState<ProductAmount[]>(() => {
+    const productList = localStorage.getItem('@list:product');
+
+    if (productList) {
+      return JSON.parse(productList);
+    }
+
+    return [] as ProductAmount[];
   });
 
-  const [cart, setCart] = useState<Product[]>([]);
-  const [totalValue, setTotalValue] = useState(0);
-
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
-    let value = 0;
-    cart.map((item) => {
-      value += item.price;
-    });
-
-    setTotalValue(value);
-  }, []);
-
-  const addProduct = useCallback(async ({ product }) => {
-    console.log('Hook vou add esse this:', product);
-
+  const updateAmount = useCallback(async (id) => {
     const newCart = cart;
-    newCart.push(product);
+
+    const productIndex = newCart.findIndex((p) => p.product.id === id);
+
+    newCart[productIndex].amount += 1;
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
 
     setCart([...newCart]);
-
-    // setCart([...cart, product]);
-
-    // setProducts((oldProduct) => [...oldProduct, product]);
   }, []);
 
-  const removeProduct = useCallback(async ({ product }) => {
-    console.log('=======');
+  const addProduct = useCallback(async (id) => {
+    const newCart = cart;
 
-    console.log('Meu Carrinho>> ', cart);
-    console.log('=======');
+    const productExists = newCart.find(
+      (p: ProductAmount) => p.product.id === id,
+    );
 
-    // console.log('Mostrando dados: data product: ', data);
-    // console.log('=>> Lista de products: ', products);
+    const stock = await api.get(`/stock/${id}`);
+
+    const stockAmount = stock.data.amount;
+    const currentAmount = productExists ? productExists.amount : 0;
+
+    const amount = currentAmount + 1;
+
+    if (amount > stockAmount) {
+      console.log('Erro: não tem mais produtos');
+
+      addToast({
+        type: 'error',
+        title: 'Falha!',
+        description: 'Só temos essa quantidade de produtos!',
+      });
+
+      return;
+    }
+
+    if (productExists) {
+      updateAmount(id);
+    } else {
+      const res = await api.get(`/products/${id}`);
+
+      const { data } = res;
+
+      const item = { amount: 1, product: data };
+      newCart.push({
+        ...item,
+        amount: 1,
+      });
+    }
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
+
+    setCart([...newCart]);
   }, []);
 
-  const updateUser = useCallback(
-    (product: Product) => {
-      setData(product);
-    },
-    [setData],
-  );
+  const removeProduct = useCallback(async (id) => {
+    const removeCart = cart;
+
+    const productIndex = removeCart.findIndex((p) => p.product.id === id);
+
+    if (productIndex >= 0) {
+      removeCart.splice(productIndex, 1);
+      setCart([...removeCart]);
+      localStorage.setItem('@list:product', JSON.stringify(removeCart));
+    }
+  }, []);
+
+  const incrementAmount = useCallback(async (id, amount) => {
+    if (amount <= 1) {
+      return;
+    }
+
+    const newCart = cart;
+
+    const stock = await api.get(`/stock/${id}`);
+
+    const stockAmount = stock.data.amount;
+
+    if (amount > stockAmount) {
+      console.log('Erro: não tem mais produtos');
+
+      addToast({
+        type: 'error',
+        title: 'Falha!',
+        description: 'Fora de estoque Só temos essa quantidade de produtos!',
+      });
+
+      return;
+    }
+
+    const productIndex = newCart.findIndex((p) => p.product.id === id);
+
+    newCart[productIndex].amount += 1;
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
+
+    setCart([...newCart]);
+  }, []);
+
+  const decrementAmount = useCallback(async (id, amount) => {
+    if (amount <= 1) {
+      return;
+    }
+
+    const newCart = cart;
+
+    const stock = await api.get(`/stock/${id}`);
+
+    const stockAmount = stock.data.amount;
+
+    if (amount < stockAmount) {
+      console.log('Erro: não tem mais produtos');
+
+      addToast({
+        type: 'error',
+        title: 'Falha!',
+        description: 'Só temos essa quantidade de produtos!',
+      });
+
+      return;
+    }
+
+    const productIndex = newCart.findIndex((p) => p.product.id === id);
+
+    newCart[productIndex].amount -= 1;
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
+
+    setCart([...newCart]);
+  }, []);
 
   return (
     <CartContext.Provider
       value={{
-        product: data,
+        cart,
         addProduct,
         removeProduct,
-        updateUser,
+
+        incrementAmount,
+        decrementAmount,
       }}
     >
       {children}

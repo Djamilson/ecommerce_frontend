@@ -6,11 +6,11 @@ import { ToastProvider } from './toast';
 
 const AppProvider: React.FC = ({ children }) => {
   return (
-    <CartProduct>
-      <LoadingProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </LoadingProvider>
-    </CartProduct>
+    <LoadingProvider>
+      <ToastProvider>
+        <CartProduct>{children}</CartProduct>
+      </ToastProvider>
+    </LoadingProvider>
   );
 };
 export default AppProvider;
