@@ -49,8 +49,6 @@ const Cart: React.FC = () => {
       };
     });
 
-    console.log('Minhas:::::', list);
-
     setNewCart(list);
   }, [cart]);
 
@@ -110,7 +108,10 @@ const Cart: React.FC = () => {
                     <button
                       type="button"
                       onClick={() =>
-                        incrementAmount(item.productAmount.product.id)
+                        incrementAmount(
+                          item.productAmount.product.id,
+                          item.productAmount.amount,
+                        )
                       }
                     >
                       <MdAddCircleOutline size={20} color="#7159c1" />

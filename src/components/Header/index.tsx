@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { FiPower, FiClock } from 'react-icons/fi';
+import React, { useMemo } from 'react';
+import { FiPower } from 'react-icons/fi';
 import { MdShoppingBasket } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
