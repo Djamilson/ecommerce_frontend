@@ -6,11 +6,9 @@ import { useToast } from './toast';
 
 interface CartContextData {
   cart: ProductAmount[];
-  addProduct(id: number): Promise<void>;
+  addToCart(id: number): Promise<void>;
   removeProduct(index: number): Promise<void>;
-
-  incrementAmount(index: number, amount: number): Promise<void>;
-  decrementAmount(index: number, amount: number): Promise<void>;
+  updateAmount(index: number, amount: number): Promise<void>;
 }
 
 export interface ProductAmount {
@@ -34,21 +32,42 @@ const CartProduct: React.FC = ({ children }) => {
     return [] as ProductAmount[];
   });
 
-  const updateAmount = useCallback(async (id) => {
+  const updateSuccess = useCallback(async (id, amount) => {
     const newCart = cart;
 
     const productIndex = newCart.findIndex(
       (p) => p.itemProduct.product.id === id,
     );
 
-    newCart[productIndex].itemProduct.amount += 1;
+    if (productIndex >= 0) {
+      newCart[productIndex].itemProduct.amount = Number(amount);
 
-    localStorage.setItem('@list:product', JSON.stringify(newCart));
-
-    setCart([...newCart]);
+      setCart([...newCart]);
+      localStorage.setItem('@list:product', JSON.stringify(newCart));
+    }
   }, []);
 
-  const addProduct = useCallback(async (id) => {
+  const updateAmount = useCallback(async (id, amount) => {
+    if (amount <= 0) return;
+
+    const stock = await api.get(`/stock/${id}`);
+    const stockAmount = stock.data.amount;
+
+    if (amount > stockAmount) {
+      console.log('Erro: não tem mais produtos');
+
+      addToast({
+        type: 'error',
+        title: 'Falha!',
+        description: 'Não temos mais produto para adicionar!',
+      });
+      return;
+    }
+
+    updateSuccess(id, amount);
+  }, []);
+
+  const addToCart = useCallback(async (id) => {
     const newCart = cart;
 
     const productExists = newCart.find(
@@ -68,14 +87,14 @@ const CartProduct: React.FC = ({ children }) => {
       addToast({
         type: 'error',
         title: 'Falha!',
-        description: 'Só temos essa quantidade de produtos!',
+        description: 'Não temos mais produto para adicionar!',
       });
 
       return;
     }
 
     if (productExists) {
-      updateAmount(id);
+      updateSuccess(id, amount);
     } else {
       const res = await api.get(`/products/${id}`);
 
@@ -89,11 +108,11 @@ const CartProduct: React.FC = ({ children }) => {
           amount: 1,
         },
       });
+
+      localStorage.setItem('@list:product', JSON.stringify(newCart));
+
+      setCart([...newCart]);
     }
-
-    localStorage.setItem('@list:product', JSON.stringify(newCart));
-
-    setCart([...newCart]);
   }, []);
 
   const removeProduct = useCallback(async (id) => {
@@ -110,83 +129,13 @@ const CartProduct: React.FC = ({ children }) => {
     }
   }, []);
 
-  const incrementAmount = useCallback(async (id, amount) => {
-    if (amount <= 1) {
-      return;
-    }
-
-    const newCart = cart;
-
-    const stock = await api.get(`/stock/${id}`);
-
-    const stockAmount = stock.data.amount;
-
-    if (amount > stockAmount) {
-      console.log('Erro: não tem mais produtos');
-
-      addToast({
-        type: 'error',
-        title: 'Falha!',
-        description: 'Fora de estoque Só temos essa quantidade de produtos!',
-      });
-
-      return;
-    }
-
-    const productIndex = newCart.findIndex(
-      (p) => p.itemProduct.product.id === id,
-    );
-
-    newCart[productIndex].itemProduct.amount += 1;
-
-    localStorage.setItem('@list:product', JSON.stringify(newCart));
-
-    setCart([...newCart]);
-  }, []);
-
-  const decrementAmount = useCallback(async (id, amount) => {
-    if (amount <= 1) {
-      return;
-    }
-
-    const newCart = cart;
-
-    const stock = await api.get(`/stock/${id}`);
-
-    const stockAmount = stock.data.amount;
-
-    if (amount < stockAmount) {
-      console.log('Erro: não tem mais produtos');
-
-      addToast({
-        type: 'error',
-        title: 'Falha!',
-        description: 'Só temos essa quantidade de produtos!',
-      });
-
-      return;
-    }
-
-    const productIndex = newCart.findIndex(
-      (p) => p.itemProduct.product.id === id,
-    );
-
-    newCart[productIndex].itemProduct.amount -= 1;
-
-    localStorage.setItem('@list:product', JSON.stringify(newCart));
-
-    setCart([...newCart]);
-  }, []);
-
   return (
     <CartContext.Provider
       value={{
         cart,
-        addProduct,
+        addToCart,
+        updateAmount,
         removeProduct,
-
-        incrementAmount,
-        decrementAmount,
       }}
     >
       {children}

@@ -21,7 +21,7 @@ interface ProductProps {
 }
 
 const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
-  const { addProduct, cart } = useCartProduct();
+  const { addToCart, cart } = useCartProduct();
   /*
   const total = cart.reduce((total[]: number, item: ProductProps) => {
     return total[item.product.id] + item.amount;
@@ -32,7 +32,6 @@ const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
       cart.reduce((sumAmount: any, item: ProductAmount) => {
         console.log('==>>', cart);
         console.log('==>>', item);
-         
 
         sumAmount[item.itemProduct.product.id] = item.itemProduct.amount;
 
@@ -41,15 +40,11 @@ const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
     [cart],
   );
 
-  useEffect(() => {
-    console.log('minhs:: ', cart);
-  }, []);
-
   const addItem = useCallback(
     async (idProduct: number) => {
-      await addProduct(idProduct);
+      await addToCart(idProduct);
     },
-    [addProduct],
+    [addToCart],
   );
 
   return (

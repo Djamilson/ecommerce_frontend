@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
@@ -9,22 +9,10 @@ import Header from '../../components/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
 import { ProductAmount } from '../../hooks/cartProduct';
 import { formatPrice } from '../../utils/format';
-import { Product } from '../Dashboard/ProductItem';
 import { Container, Content, ProductTable, Total } from './styles';
 
-interface ItemProduct {
-  subtotal: number | string;
-  amount: number;
-  product: Product;
-}
-
 const Cart: React.FC = () => {
-  const {
-    cart,
-    removeProduct,
-    incrementAmount,
-    decrementAmount,
-  } = useCartProduct();
+  const { cart, removeProduct, updateAmount } = useCartProduct();
 
   const total = useMemo(
     () =>
@@ -41,14 +29,12 @@ const Cart: React.FC = () => {
   const products = useMemo(
     () =>
       cart.map((item: ProductAmount) => {
-        console.log('Meu item:::', item);
         return {
           subtotal: formatPrice(
             Number(item.itemProduct.product.price) *
               Number(item.itemProduct.amount),
           ),
           amount: item.itemProduct.amount,
-
           product: {
             ...item.itemProduct.product,
             priceFormatted: formatPrice(item.itemProduct.product.price),
@@ -63,6 +49,20 @@ const Cart: React.FC = () => {
       await removeProduct(index);
     },
     [removeProduct],
+  );
+
+  const increment = useCallback(
+    async (id: number, amount: number) => {
+      await updateAmount(id, amount + 1);
+    },
+    [updateAmount],
+  );
+
+  const decrement = useCallback(
+    async (id: number, amount: number) => {
+      await updateAmount(id, amount - 1);
+    },
+    [updateAmount],
   );
 
   return (
@@ -92,9 +92,7 @@ const Cart: React.FC = () => {
                   <div>
                     <button
                       type="button"
-                      onClick={() =>
-                        decrementAmount(item.product.id, item.amount)
-                      }
+                      onClick={() => decrement(item.product.id, item.amount)}
                     >
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
                     </button>
@@ -103,9 +101,7 @@ const Cart: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() =>
-                        incrementAmount(item.product.id, item.amount)
-                      }
+                      onClick={() => increment(item.product.id, item.amount)}
                     >
                       <MdAddCircleOutline size={20} color="#7159c1" />
                     </button>
