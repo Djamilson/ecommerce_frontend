@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FiPower, FiClock } from 'react-icons/fi';
 import { MdShoppingBasket } from 'react-icons/md';
 import { Link } from 'react-router-dom';
@@ -7,24 +7,10 @@ import logoImg from '../../assets/logo.svg';
 import { useCartProduct } from '../../hooks/cartProduct';
 import { Container, HeaderContainer, Cart, Profile } from './styles';
 
-interface Props {
-  id: string;
-  date: string;
-  hourFormatted: string;
-  user: {
-    name: string;
-    avatar_url: string;
-  };
-}
-
 const Header: React.FC = () => {
-  const { totalItens, cart } = useCartProduct();
-  const [qtdade] = useState(cart.length);
+  const { cart } = useCartProduct();
 
-  useEffect(() => {
-    console.log('Quantidade: ', cart.length);
-    console.log('Hook vou add esse this:');
-  }, []);
+  const qtdade = useMemo(() => cart.length, [cart]);
 
   return (
     <Container>

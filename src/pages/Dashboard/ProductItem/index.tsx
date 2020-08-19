@@ -17,7 +17,7 @@ export interface ProductItemProps {
 }
 
 const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
-  const { cart, totalValue, addProduct, removeProduct } = useCartProduct();
+  const { addProduct } = useCartProduct();
 
   const addItemA = useCallback(
     async (productItem: Product) => {

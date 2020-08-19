@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState, useEffect } from 'react';
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
@@ -7,17 +7,52 @@ import {
 
 import Header from '../../components/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
-import { Product } from '../Dashboard/ProductItem';
+import { ProductAmount } from '../../hooks/cartProduct';
+import { formatPrice } from '../../utils/format';
 import { Container, Content, ProductTable, Total } from './styles';
+
+interface PropsItem {
+  subtotal: string;
+  productAmount: ProductAmount;
+}
 
 const Cart: React.FC = () => {
   const {
     cart,
-    totalValue,
-    addProduct,
 
     removeProduct,
+    incrementAmount,
+    decrementAmount,
   } = useCartProduct();
+
+  const [newCart, setNewCart] = useState<PropsItem[]>(() => {
+    return [] as PropsItem[];
+  });
+
+  const total = useMemo(
+    () =>
+      formatPrice(
+        cart.reduce((totalsum, item) => {
+          return totalsum + item.product.price * item.amount;
+        }, 0),
+      ),
+    [cart],
+  );
+
+  useEffect(() => {
+    let list = [] as PropsItem[];
+
+    list = cart.map((item) => {
+      return {
+        productAmount: item,
+        subtotal: formatPrice(Number(item.product.price) * Number(item.amount)),
+      };
+    });
+
+    console.log('Minhas:::::', list);
+
+    setNewCart(list);
+  }, [cart]);
 
   const removeItem = useCallback(
     async (index: number) => {
@@ -40,33 +75,56 @@ const Cart: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {cart.map((item, index) => (
-              <tr key={item.product.id}>
+            {newCart.map((item) => (
+              <tr key={item.productAmount.product.id}>
                 <td>
-                  <img src={item.product.image} alt={item.product.title} />
+                  <img
+                    src={item.productAmount.product.image}
+                    alt={item.productAmount.product.title}
+                  />
                 </td>
                 <td>
-                  <strong>{item.product.title}</strong>
-                  <span>{item.product.priceFormatted}</span>
+                  <strong>{item.productAmount.product.title}</strong>
+                  <span>{item.productAmount.product.priceFormatted}</span>
                 </td>
                 <td>
                   <div>
-                    <button type="button">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        decrementAmount(
+                          item.productAmount.product.id,
+                          item.productAmount.amount,
+                        )
+                      }
+                    >
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
                     </button>
 
-                    <input type="number" readOnly value={item.amount} />
+                    <input
+                      type="number"
+                      readOnly
+                      value={item.productAmount.amount}
+                    />
 
-                    <button type="button">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        incrementAmount(item.productAmount.product.id)
+                      }
+                    >
                       <MdAddCircleOutline size={20} color="#7159c1" />
                     </button>
                   </div>
                 </td>
                 <td>
-                  <strong>R$ 258,00</strong>
+                  <strong>{item.subtotal}</strong>
                 </td>
                 <td>
-                  <button type="button" onClick={() => removeItem(index)}>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(item.productAmount.product.id)}
+                  >
                     <MdDelete size={20} color="#7159c1" />
                   </button>
                 </td>
@@ -80,7 +138,7 @@ const Cart: React.FC = () => {
 
           <Total>
             <span>TOTAL</span>
-            <strong>R$ 1.920,28</strong>
+            <strong>{total}</strong>
           </Total>
         </footer>
       </Content>

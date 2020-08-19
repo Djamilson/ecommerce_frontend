@@ -10,13 +10,14 @@ import { Product, ProductItemProps } from '../pages/Dashboard/ProductItem';
 
 interface CartContextData {
   cart: ProductAmount[];
-  totalItens: number;
-  totalValue: number;
   addProduct(itemProduct: ProductItemProps): Promise<void>;
   removeProduct(index: number): Promise<void>;
+
+  incrementAmount(index: number): Promise<void>;
+  decrementAmount(index: number, amount: number): Promise<void>;
 }
 
-interface ProductAmount {
+export interface ProductAmount {
   amount: number;
   product: Product;
 }
@@ -34,33 +35,61 @@ const CartProduct: React.FC = ({ children }) => {
     return [] as ProductAmount[];
   });
 
-  const [totalValue, setTotalValue] = useState(0);
-  const [totalItens, setTotalItens] = useState(0);
-
-  useEffect(() => {
-    const value = 0;
-    // cart.map((item: ProductAmount) => (value.product += item.price));
-
-    setTotalValue(value);
-    setTotalItens(cart.length);
-  }, [cart]);
-
   const addProduct = useCallback(async ({ product }) => {
     const item = { amount: 1, product };
 
     const newCart = cart;
 
-    newCart.push(item);
+    const productIndex = newCart.findIndex((p) => p.product.id === product.id);
+
+    if (productIndex >= 0) {
+      newCart[productIndex].amount += 1;
+    } else {
+      newCart.push({
+        ...item,
+        amount: 1,
+      });
+    }
 
     localStorage.setItem('@list:product', JSON.stringify(newCart));
 
     setCart([...newCart]);
   }, []);
 
-  const removeProduct = useCallback(async (index) => {
-    console.log('Vou começar a remover:', index);
+  const removeProduct = useCallback(async (id) => {
+    const removeCart = cart;
 
-    const newCart = cart.filter((item, i) => i !== index);
+    const productIndex = removeCart.findIndex((p) => p.product.id === id);
+
+    if (productIndex >= 0) {
+      removeCart.splice(productIndex, 1);
+      setCart([...removeCart]);
+      localStorage.setItem('@list:product', JSON.stringify(removeCart));
+    }
+  }, []);
+
+  const incrementAmount = useCallback(async (id) => {
+    const newCart = cart;
+
+    const productIndex = newCart.findIndex((p) => p.product.id === id);
+
+    newCart[productIndex].amount += 1;
+
+    localStorage.setItem('@list:product', JSON.stringify(newCart));
+
+    setCart([...newCart]);
+  }, []);
+
+  const decrementAmount = useCallback(async (id, amount) => {
+    if (amount <= 1) {
+      return;
+    }
+
+    const newCart = cart;
+
+    const productIndex = newCart.findIndex((p) => p.product.id === id);
+
+    newCart[productIndex].amount -= 1;
 
     localStorage.setItem('@list:product', JSON.stringify(newCart));
 
@@ -71,10 +100,11 @@ const CartProduct: React.FC = ({ children }) => {
     <CartContext.Provider
       value={{
         cart,
-        totalValue,
-        totalItens,
         addProduct,
         removeProduct,
+
+        incrementAmount,
+        decrementAmount,
       }}
     >
       {children}
