@@ -24,23 +24,10 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
       await addProduct({
         product: productItem,
       });
-
-      await removeProduct({
-        product: productItem,
-      });
     },
-    [addProduct, removeProduct],
+    [addProduct],
   );
 
-  const addItem = useCallback(async (productItem: Product) => {
-    console.log('Product:', productItem);
-
-    // await addProduct(productItem);
-  }, []);
-  // addItem(product)
-  /* const handleSelected = useCallback((providerId: string) => {
-    setSelectedProvider(providerId);
-  }, []); */
   return (
     <Container>
       <img src={product.image} alt={product.title} />

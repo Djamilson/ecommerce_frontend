@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   MdRemoveCircleOutline,
   MdAddCircleOutline,
@@ -7,6 +7,7 @@ import {
 
 import Header from '../../components/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
+import { Product } from '../Dashboard/ProductItem';
 import { Container, Content, ProductTable, Total } from './styles';
 
 const Cart: React.FC = () => {
@@ -17,6 +18,13 @@ const Cart: React.FC = () => {
 
     removeProduct,
   } = useCartProduct();
+
+  const removeItem = useCallback(
+    async (index: number) => {
+      await removeProduct(index);
+    },
+    [removeProduct],
+  );
 
   return (
     <Container>
@@ -32,14 +40,14 @@ const Cart: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {cart.map((item) => (
-              <tr key={item.id}>
+            {cart.map((item, index) => (
+              <tr key={item.product.id}>
                 <td>
-                  <img src={item.image} alt={item.title} />
+                  <img src={item.product.image} alt={item.product.title} />
                 </td>
                 <td>
-                  <strong>{item.title}</strong>
-                  <span>{item.priceFormatted}</span>
+                  <strong>{item.product.title}</strong>
+                  <span>{item.product.priceFormatted}</span>
                 </td>
                 <td>
                   <div>
@@ -47,7 +55,7 @@ const Cart: React.FC = () => {
                       <MdRemoveCircleOutline size={20} color="#7159c1" />
                     </button>
 
-                    <input type="number" readOnly value={1} />
+                    <input type="number" readOnly value={item.amount} />
 
                     <button type="button">
                       <MdAddCircleOutline size={20} color="#7159c1" />
@@ -58,7 +66,7 @@ const Cart: React.FC = () => {
                   <strong>R$ 258,00</strong>
                 </td>
                 <td>
-                  <button type="button">
+                  <button type="button" onClick={() => removeItem(index)}>
                     <MdDelete size={20} color="#7159c1" />
                   </button>
                 </td>
