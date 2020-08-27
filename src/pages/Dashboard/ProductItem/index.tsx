@@ -1,12 +1,12 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { MdAddShoppingCart } from 'react-icons/md';
 
-import { ProductAmount, useCartProduct } from '../../../hooks/cartProduct';
+import { ProductStock, useCartProduct } from '../../../hooks/cartProduct';
 import { Container } from './styles';
 
 export interface Product {
   id: number;
-  title: string;
+  name: string;
   price: number;
   priceFormatted: number;
   image: string;
@@ -16,11 +16,11 @@ export interface ProductItemProps {
   product: Product;
 }
 interface ProductProps {
-  amount: number;
+  stock: number;
   product: Product;
 }
 
-const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
+const ProductItem: React.FC<ProductStock> = (itemProduct: ProductStock) => {
   const { addToCart, cart } = useCartProduct();
   /*
   const total = cart.reduce((total[]: number, item: ProductProps) => {
@@ -29,11 +29,11 @@ const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
 
   const amount = useMemo(
     () =>
-      cart.reduce((sumAmount: any, item: ProductAmount) => {
+      cart.reduce((sumAmount: any, item: ProductStock) => {
         console.log('==>>', cart);
         console.log('==>>', item);
 
-        sumAmount[item.itemProduct.product.id] = item.itemProduct.amount;
+        sumAmount[item.itemProduct.product.id] = item.itemProduct.stock;
 
         return sumAmount;
       }, {}),
@@ -51,9 +51,9 @@ const ProductItem: React.FC<ProductAmount> = (itemProduct: ProductAmount) => {
     <Container>
       <img
         src={itemProduct.itemProduct.product.image}
-        alt={itemProduct.itemProduct.product.title}
+        alt={itemProduct.itemProduct.product.name}
       />
-      <strong>{itemProduct.itemProduct.product.title}</strong>
+      <strong>{itemProduct.itemProduct.product.name}</strong>
       <span>{itemProduct.itemProduct.product.priceFormatted}</span>
 
       <button
