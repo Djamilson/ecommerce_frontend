@@ -4,6 +4,7 @@ import {
   MdAddCircleOutline,
   MdDelete,
 } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
 
 import Header from '../../components/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
@@ -13,6 +14,7 @@ import { Container, Content, ProductTable, Total } from './styles';
 
 const Cart: React.FC = () => {
   const { cart, removeProduct, updateAmount } = useCartProduct();
+  const history = useHistory();
 
   const total = useMemo(
     () =>
@@ -64,6 +66,10 @@ const Cart: React.FC = () => {
     },
     [updateAmount],
   );
+
+  const handlePayment = useCallback(() => {
+    history.push('/payment');
+  }, []);
 
   return (
     <Container>
@@ -124,7 +130,9 @@ const Cart: React.FC = () => {
         </ProductTable>
 
         <footer>
-          <button type="button">Finalizar pedido</button>
+          <button type="button" onClick={handlePayment}>
+            Finalizar pedido
+          </button>
 
           <Total>
             <span>TOTAL</span>

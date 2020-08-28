@@ -15,7 +15,6 @@ const DashBoard: React.FC = () => {
 
   useEffect(() => {
     api.get('products').then((res) => {
-      console.log('meu retorno::: ', res.data);
       const productFormatted = res.data.data.map((product: Product) => {
         return {
           itemProduct: {
@@ -26,8 +25,6 @@ const DashBoard: React.FC = () => {
           },
         };
       });
-
-      console.log(productFormatted);
 
       setProducts(productFormatted);
     });
