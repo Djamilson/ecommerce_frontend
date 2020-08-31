@@ -1,15 +1,6 @@
 import React from 'react';
-import {
-  FiPlusSquare,
-  FiPlusCircle,
-  FiLock,
-  FiMail,
-  FiUser,
-  FiCamera,
-} from 'react-icons/fi';
-import { FiPower } from 'react-icons/fi';
-import { MdShoppingBasket } from 'react-icons/md';
-import { Link, useHistory } from 'react-router-dom';
+import { FiPlusCircle } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 import { Container } from './styles';
 

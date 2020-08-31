@@ -6,7 +6,7 @@ import {
 } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 
-import Header from '../../components/Header';
+import Header from '../../components/Headers/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
 import { ProductStock } from '../../hooks/cartProduct';
 import { formatPrice } from '../../utils/format';

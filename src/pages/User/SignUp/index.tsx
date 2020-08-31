@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import api from '../../../_services/api';
 import logoImg from '../../../assets/logo.svg';
 import Button from '../../../components/Button';
-import Input from '../../../components/Input';
+import Input from '../../../components/Form/Input';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';

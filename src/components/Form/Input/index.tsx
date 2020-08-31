@@ -10,7 +10,7 @@ import { FiAlertCircle } from 'react-icons/fi';
 
 import { useField } from '@unform/core';
 
-import { colors } from '../../styles';
+import { colors } from '../../../styles';
 import { Container, InputBlock, Error } from './styles';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
