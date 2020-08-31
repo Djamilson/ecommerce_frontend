@@ -3,19 +3,19 @@ import { MdAddShoppingCart } from 'react-icons/md';
 
 import api from '../../_services/api';
 import Header from '../../components/Header';
-import { ProductAmount } from '../../hooks/cartProduct';
+import { ProductStock } from '../../hooks/cartProduct';
 import { formatPrice } from '../../utils/format';
 import ProductItem, { Product } from './ProductItem';
 import { Container, ProductList } from './styles';
 
 const DashBoard: React.FC = () => {
-  const [products, setProducts] = useState<ProductAmount[]>(() => {
-    return [] as ProductAmount[];
+  const [products, setProducts] = useState<ProductStock[]>(() => {
+    return [] as ProductStock[];
   });
 
   useEffect(() => {
     api.get('products').then((res) => {
-      const productFormatted = res.data.map((product: Product) => {
+      const productFormatted = res.data.data.map((product: Product) => {
         return {
           itemProduct: {
             product: {
@@ -26,8 +26,6 @@ const DashBoard: React.FC = () => {
         };
       });
 
-      console.log(productFormatted);
-
       setProducts(productFormatted);
     });
   }, []);
@@ -36,7 +34,7 @@ const DashBoard: React.FC = () => {
     <Container>
       <Header />
       <ProductList>
-        {products.map((product: ProductAmount) => {
+        {products.map((product: ProductStock) => {
           return (
             <ProductItem
               key={product.itemProduct.product.id}

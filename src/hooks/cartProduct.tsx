@@ -5,15 +5,15 @@ import { Product } from '../pages/Dashboard/ProductItem';
 import { useToast } from './toast';
 
 interface CartContextData {
-  cart: ProductAmount[];
+  cart: ProductStock[];
   addToCart(id: number): Promise<void>;
   removeProduct(index: number): Promise<void>;
-  updateAmount(index: number, amount: number): Promise<void>;
+  updateAmount(index: number, stock: number): Promise<void>;
 }
 
-export interface ProductAmount {
+export interface ProductStock {
   itemProduct: {
-    amount: number;
+    stock: number;
     product: Product;
   };
 }
@@ -22,17 +22,17 @@ const CartContext = createContext<CartContextData>({} as CartContextData);
 
 const CartProduct: React.FC = ({ children }) => {
   const { addToast } = useToast();
-  const [cart, setCart] = useState<ProductAmount[]>(() => {
+  const [cart, setCart] = useState<ProductStock[]>(() => {
     const productList = localStorage.getItem('@list:product');
 
     if (productList) {
       return JSON.parse(productList);
     }
 
-    return [] as ProductAmount[];
+    return [] as ProductStock[];
   });
 
-  const updateSuccess = useCallback(async (id, amount) => {
+  const updateSuccess = useCallback(async (id, stock) => {
     const newCart = cart;
 
     const productIndex = newCart.findIndex(
@@ -40,20 +40,20 @@ const CartProduct: React.FC = ({ children }) => {
     );
 
     if (productIndex >= 0) {
-      newCart[productIndex].itemProduct.amount = Number(amount);
+      newCart[productIndex].itemProduct.stock = Number(stock);
 
       setCart([...newCart]);
       localStorage.setItem('@list:product', JSON.stringify(newCart));
     }
   }, []);
 
-  const updateAmount = useCallback(async (id, amount) => {
-    if (amount <= 0) return;
+  const updateAmount = useCallback(async (id, stock) => {
+    if (stock <= 0) return;
 
-    const stock = await api.get(`/stock/${id}`);
-    const stockAmount = stock.data.amount;
+    const searchStock = await api.get(`/products/${id}`);
+    const stockAmount = searchStock.data.stock;
 
-    if (amount > stockAmount) {
+    if (stock > stockAmount) {
       console.log('Erro: não tem mais produtos');
 
       addToast({
@@ -64,20 +64,20 @@ const CartProduct: React.FC = ({ children }) => {
       return;
     }
 
-    updateSuccess(id, amount);
+    updateSuccess(id, stock);
   }, []);
 
   const addToCart = useCallback(async (id) => {
     const newCart = cart;
 
     const productExists = newCart.find(
-      (p: ProductAmount) => p.itemProduct.product.id === id,
+      (p: ProductStock) => p.itemProduct.product.id === id,
     );
 
-    const stock = await api.get(`/stock/${id}`);
+    const stock = await api.get(`/products/${id}`);
 
-    const stockAmount = stock.data.amount;
-    const currentAmount = productExists ? productExists.itemProduct.amount : 0;
+    const stockAmount = stock.data.stock;
+    const currentAmount = productExists ? productExists.itemProduct.stock : 0;
 
     const amount = currentAmount + 1;
 
@@ -100,12 +100,12 @@ const CartProduct: React.FC = ({ children }) => {
 
       const { data } = res;
 
-      const item = { amount: 1, product: data };
+      const item = { stock: 1, product: data };
 
       newCart.push({
         itemProduct: {
           ...item,
-          amount: 1,
+          stock: 1,
         },
       });
 

@@ -9,10 +9,34 @@ interface ContainerProps {
   isErrored: boolean;
 }
 
+export const InputBlock = styled.div`
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 10px 0px 10px;
+
+  && {
+    margin-top: 1.4rem;
+  }
+
+  label {
+    font-size: 1.2rem;
+    color: ${colors.colorTextcomplement};
+  }
+`;
+
 export const Container = styled.div<ContainerProps>`
-  background: #232129;
+
+
+  background: ${colors.colorInputBackground};
   border-radius: 10px;
-  border: 2px solid #232129;
+  border: 1px solid ${colors.colorLineInWhite};
+  padding: 12.8px;
+  width: 100%;
+
+  border-radius: 10px;
   padding: 16px;
   width: 100%;
   color: #666360;
@@ -45,17 +69,24 @@ export const Container = styled.div<ContainerProps>`
 
 
   input {
-    flex: 1;
+
+
+ flex: 1;
     border: 0;
-    color: ${colors.primary};
-    -webkit-text-fill-color: ${colors.primary};
+    color: ${colors.colorPrimary};
+    -webkit-text-fill-color: ${colors.colorPrimary};
 
     transition: background-color 5000s ease-in-out 0s;
 
     background: transparent;
     &::placeholder {
-      color: ${colors.third};
+      color: ${colors.colorTextInPrimary};
     }
+
+
+
+
+
   }
 
   svg {

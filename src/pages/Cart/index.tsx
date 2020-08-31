@@ -4,22 +4,24 @@ import {
   MdAddCircleOutline,
   MdDelete,
 } from 'react-icons/md';
+import { useHistory } from 'react-router-dom';
 
 import Header from '../../components/Header';
 import { useCartProduct } from '../../hooks/cartProduct';
-import { ProductAmount } from '../../hooks/cartProduct';
+import { ProductStock } from '../../hooks/cartProduct';
 import { formatPrice } from '../../utils/format';
 import { Container, Content, ProductTable, Total } from './styles';
 
 const Cart: React.FC = () => {
   const { cart, removeProduct, updateAmount } = useCartProduct();
+  const history = useHistory();
 
   const total = useMemo(
     () =>
       formatPrice(
         cart.reduce((totalsum, item) => {
           return (
-            totalsum + item.itemProduct.product.price * item.itemProduct.amount
+            totalsum + item.itemProduct.product.price * item.itemProduct.stock
           );
         }, 0),
       ),
@@ -28,13 +30,13 @@ const Cart: React.FC = () => {
 
   const products = useMemo(
     () =>
-      cart.map((item: ProductAmount) => {
+      cart.map((item: ProductStock) => {
         return {
           subtotal: formatPrice(
             Number(item.itemProduct.product.price) *
-              Number(item.itemProduct.amount),
+              Number(item.itemProduct.stock),
           ),
-          amount: item.itemProduct.amount,
+          amount: item.itemProduct.stock,
           product: {
             ...item.itemProduct.product,
             priceFormatted: formatPrice(item.itemProduct.product.price),
@@ -52,18 +54,22 @@ const Cart: React.FC = () => {
   );
 
   const increment = useCallback(
-    async (id: number, amount: number) => {
-      await updateAmount(id, amount + 1);
+    async (id: number, stock: number) => {
+      await updateAmount(id, stock + 1);
     },
     [updateAmount],
   );
 
   const decrement = useCallback(
-    async (id: number, amount: number) => {
-      await updateAmount(id, amount - 1);
+    async (id: number, stock: number) => {
+      await updateAmount(id, stock - 1);
     },
     [updateAmount],
   );
+
+  const handlePayment = useCallback(() => {
+    history.push('/payment');
+  }, []);
 
   return (
     <Container>
@@ -82,10 +88,10 @@ const Cart: React.FC = () => {
             {products.map((item) => (
               <tr key={item.product.id}>
                 <td>
-                  <img src={item.product.image} alt={item.product.title} />
+                  <img src={item.product.image} alt={item.product.name} />
                 </td>
                 <td>
-                  <strong>{item.product.title}</strong>
+                  <strong>{item.product.name}</strong>
                   <span>{item.product.priceFormatted}</span>
                 </td>
                 <td>
@@ -124,7 +130,9 @@ const Cart: React.FC = () => {
         </ProductTable>
 
         <footer>
-          <button type="button">Finalizar pedido</button>
+          <button type="button" onClick={handlePayment}>
+            Finalizar pedido
+          </button>
 
           <Total>
             <span>TOTAL</span>

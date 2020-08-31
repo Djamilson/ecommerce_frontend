@@ -2,11 +2,25 @@ import React, { createContext, useCallback, useState, useContext } from 'react';
 
 import api from '../_services/api';
 
-interface User {
+interface Person {
   id: string;
   name: string;
   email: string;
-  avatar_url: string;
+  status: boolean;
+  privacy: boolean;
+  avatar?: string;
+  avatar_url?: string;
+}
+interface IGroup {
+  id: string;
+  name: string;
+  description: string;
+}
+interface User {
+  id: string;
+  is_verified: boolean;
+  user_groups: IGroup[];
+  person: Person;
 }
 
 interface AuthState {
