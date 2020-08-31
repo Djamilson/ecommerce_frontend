@@ -1,6 +1,6 @@
 import colors from './colors';
 import dimension from './dimension';
-// import fonts from './fonts';
+import fonts from './fonts';
 // import metrics from './metrics';
 
-export { colors, dimension };
+export { colors, dimension, fonts };

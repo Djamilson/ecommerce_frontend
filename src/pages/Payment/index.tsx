@@ -1,15 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { FiPlusCircle, FiLock, FiMail, FiUser, FiCamera } from 'react-icons/fi';
+import { Link, useHistory } from 'react-router-dom';
 
 import Header from '../../components/Header';
+import HeaderButton from '../../components/Headers/HeaderButtonForm';
+import SubHeader from '../../components/Headers/SubHeader';
 import { Content } from '../Cart/styles';
-import { Container } from './styles';
+import { Container, Section } from './styles';
 
 const Payment: React.FC = () => {
   return (
     <Container>
       <Header />
+
+      <SubHeader />
+
       <Content>
-        <h1>Modelo</h1>
+        <Section>
+          <strong>Manhã</strong>
+        </Section>
       </Content>
     </Container>
   );
