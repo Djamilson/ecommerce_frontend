@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { FiPlusCircle, FiLock, FiMail, FiUser, FiCamera } from 'react-icons/fi';
 import { Link, useHistory } from 'react-router-dom';
 
-import Header from '../../components/Header';
+import Header from '../../components/Headers/Header';
 import HeaderButton from '../../components/Headers/HeaderButtonForm';
 import SubHeader from '../../components/Headers/SubHeader';
 import { Content } from '../Cart/styles';

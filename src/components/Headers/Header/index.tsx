@@ -3,9 +3,9 @@ import { FiPower, FiLogIn } from 'react-icons/fi';
 import { MdShoppingBasket } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 
-import logoImg from '../../assets/logo.svg';
-import { useAuth } from '../../hooks/auth';
-import { useCartProduct } from '../../hooks/cartProduct';
+import logoImg from '../../../assets/logo.svg';
+import { useAuth } from '../../../hooks/auth';
+import { useCartProduct } from '../../../hooks/cartProduct';
 import {
   Container,
   HeaderContainer,

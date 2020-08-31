@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 
 import logoImg from '../../../../assets/logo.svg';
 import Button from '../../../../components/Button';
-import Input from '../../../../components/Input';
+import Input from '../../../../components/Form/Input';
 import { useAuth } from '../../../../hooks/auth';
 import { useLoading } from '../../../../hooks/loading';
 import { useToast } from '../../../../hooks/toast';
@@ -47,7 +47,6 @@ const SignIn: React.FC = () => {
           loading: true,
           description: 'Aguarde ...',
         });
-
 
         await signIn({
           email: data.email,

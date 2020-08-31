@@ -1,6 +1,13 @@
-import React, { useCallback, useRef } from 'react';
-import { FiArrowLeft, FiLock, FiUser, FiMail, FiCheck } from 'react-icons/fi';
-import { Link, useHistory } from 'react-router-dom';
+import React, {
+  useCallback,
+  useRef,
+  useState,
+  ChangeEvent,
+  FormEvent,
+  useMemo,
+} from 'react';
+import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -9,12 +16,16 @@ import * as Yup from 'yup';
 import api from '../../../_services/api';
 import warningIcon from '../../../assets/images/icons/warning.svg';
 import Button from '../../../components/Button';
+import Input from '../../../components/Form/Input';
 import Select from '../../../components/Form/Select';
-import Input from '../../../components/Input';
+import Header from '../../../components/Headers/Header';
+import HeaderButton from '../../../components/Headers/HeaderButtonForm';
+import SubHeader from '../../../components/Headers/SubHeader';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';
-import { AnimationContainer, Container, Content } from './styles';
+// import { AnimationContainer, Container, Content, ScheduleItem } from './styles';
+import { Container, Content, ContainerForm, ScheduleItem } from './styles';
 
 interface SignUpFormData {
   name: string;
@@ -27,6 +38,22 @@ const AddressForm: React.FC = () => {
   const { addToast } = useToast();
   const history = useHistory();
   const { addLoading, removeLoading } = useLoading();
+
+  const INITIAL_STATE = {
+    value: 0,
+    label: 'Selecione o estado',
+  };
+
+  const INITIAL_CITY = {
+    value: 0,
+    label: 'Selecione a cidade',
+  };
+
+  const [selectedUf, setSelectedUf] = useState(INITIAL_STATE);
+  const [selectedCity, setSelectedCity] = useState(INITIAL_CITY);
+
+  const [ufs, setUfs] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
 
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
@@ -77,10 +104,46 @@ const AddressForm: React.FC = () => {
     [addToast, addLoading, removeLoading, history],
   );
 
+  async function loadStates() {
+    const response = await api.get(`states/select`);
+    setUfs(response.data);
+  }
+
+  useMemo(() => loadStates(), []);
+
+  function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
+    const uf = event.target.value;
+
+    //  setSelectedUf(uf);
+  }
+
+  function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
+    const city = event.target.value;
+
+    // setSelectedCity(city);
+  }
+
+  const loadCities = useCallback(async (state_id: string) => {
+    try {
+      if (Object.getPrototypeOf(state_id)) {
+        const response = await api.get(`cities/${state_id}/select`, {
+          params: {
+            q: ``,
+          },
+        });
+
+        setCities(response.data.itens);
+      }
+    } catch (err) {
+    } finally {
+    }
+  }, []);
+
   return (
     <Container>
       <Content>
-        <AnimationContainer>
+        <Header />
+        <ContainerForm>
           <Form ref={formRef} onSubmit={handleSubmit}>
             <header>
               <p>
@@ -88,82 +151,94 @@ const AddressForm: React.FC = () => {
                 Importante! <br />
                 Preencha todos os dados
               </p>
-              <Button type="submit">
-                <span>
-                  <FiCheck />
-                </span>
-                <strong>Salvar</strong>
-              </Button>
+              <Button type="submit">Confirmar mudanças</Button>
             </header>
-            <h1>Faça seu cadastro</h1>
-
-            <Input name="name" icon={FiUser} placeholder="Nome" label="Rua" />
-            <Input
-              label="Complemento"
-              name="complement"
-              icon={FiMail}
-              placeholder="Complemento"
-            />
-            <Input
-              label="Número Lote/Casa"
-              name="password"
-              icon={FiLock}
-              placeholder="Número"
-            />
 
             <fieldset>
-              <legend>Seus dados</legend>
-
+              <legend>
+                Seu endereço
+                <button type="submit">
+                  <span>
+                    <FiCheck />
+                  </span>
+                  <strong>Salvar</strong>
+                </button>
+              </legend>
               <Input
-                label="Número Lote/Casa"
-                name="password"
+                placeholder="Rua/quadra"
+                name="street"
                 icon={FiLock}
-                placeholder="Número"
+                label="Rua/quadra"
               />
               <Input
                 label="Número Lote/Casa"
-                name="password"
+                name="number"
                 icon={FiLock}
                 placeholder="Número"
               />
-              <Input
-                placeholder="Número"
-                name="whatsapp"
-                icon={FiLock}
-                label="whatsApp"
-              />
-            </fieldset>
-
-            <fieldset>
-              <legend>Sobre a aula</legend>
-
-              <Select
-                name="subject"
-                label="Matéria"
-                options={[
-                  { value: 'Artes', label: 'Artes' },
-                  { value: 'Artes', label: 'Artes' },
-                  { value: 'Artes', label: 'Artes' },
-                  { value: 'Artes', label: 'Artes' },
-                  { value: 'Artes', label: 'Artes' },
-                  { value: 'Artes', label: 'Artes' },
-                ]}
-              />
 
               <Input
-                label="Complemento"
-                name="complement"
-                icon={FiMail}
                 placeholder="Complemento"
+                name="complement"
+                icon={FiLock}
+                label="Complemento"
+              />
+
+              <Input
+                placeholder="Bairro"
+                name="neighborhood"
+                icon={FiLock}
+                label="Bairro"
+              />
+
+              <Input
+                placeholder="CEP"
+                name="zip_code"
+                icon={FiLock}
+                label="CEP"
               />
             </fieldset>
-            <Button type="submit">Cadastrar</Button>
+
+            <fieldset>
+              <legend>Localidade</legend>
+              <ScheduleItem>
+                <Select
+                  name="subject"
+                  label="Estado"
+                  options={[
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                  ]}
+                />
+
+                <Select
+                  name="subject"
+                  label="Cidade"
+                  options={[
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                    { value: 'Artes', label: 'Artes' },
+                  ]}
+                />
+              </ScheduleItem>
+            </fieldset>
+
+            <footer>
+              <p>
+                <img src={warningIcon} alt="Aviso importante" />
+                Importante! <br />
+                Preencha todos os dados
+              </p>
+            </footer>
           </Form>
-          <Link to="/">
-            <FiArrowLeft />
-            Voltar para logon
-          </Link>
-        </AnimationContainer>
+        </ContainerForm>
       </Content>
     </Container>
   );
