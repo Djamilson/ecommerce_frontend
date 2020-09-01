@@ -1,6 +1,7 @@
 import React, {
   useCallback,
   useRef,
+  useEffect,
   useState,
   ChangeEvent,
   FormEvent,
@@ -8,6 +9,7 @@ import React, {
 } from 'react';
 import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
+import { ValueType } from 'react-select/src/types';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
@@ -19,18 +21,29 @@ import Button from '../../../components/Button';
 import Input from '../../../components/Form/Input';
 import Select from '../../../components/Form/Select';
 import Header from '../../../components/Headers/Header';
-import HeaderButton from '../../../components/Headers/HeaderButtonForm';
-import SubHeader from '../../../components/Headers/SubHeader';
+import SelectCity from '../../../components/SelectCity';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';
 // import { AnimationContainer, Container, Content, ScheduleItem } from './styles';
 import { Container, Content, ContainerForm, ScheduleItem } from './styles';
 
+type OptionType = { label: string; value: number };
+
 interface SignUpFormData {
   name: string;
   email: string;
   pessword: string;
+}
+
+interface UF {
+  value: string;
+  label: string;
+}
+
+interface CITY {
+  value: string;
+  label: string;
 }
 
 const AddressForm: React.FC = () => {
@@ -39,21 +52,16 @@ const AddressForm: React.FC = () => {
   const history = useHistory();
   const { addLoading, removeLoading } = useLoading();
 
-  const INITIAL_STATE = {
-    value: 0,
-    label: 'Selecione o estado',
-  };
-
   const INITIAL_CITY = {
     value: 0,
     label: 'Selecione a cidade',
   };
 
-  const [selectedUf, setSelectedUf] = useState(INITIAL_STATE);
-  const [selectedCity, setSelectedCity] = useState(INITIAL_CITY);
+  const [selectedUf, setSelectedUf] = useState<string>('0');
+  const [selectedCity, setSelectedCity] = useState<string>('0');
 
-  const [ufs, setUfs] = useState<string[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
+  const [ufs, setUfs] = useState<UF[]>([]);
+  const [cities, setCities] = useState<CITY[]>([]);
 
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
@@ -105,7 +113,7 @@ const AddressForm: React.FC = () => {
   );
 
   async function loadStates() {
-    const response = await api.get(`states/select`);
+    const response = await api.get(`states`);
     setUfs(response.data);
   }
 
@@ -113,31 +121,43 @@ const AddressForm: React.FC = () => {
 
   function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
     const uf = event.target.value;
-
-    //  setSelectedUf(uf);
+    console.log('Meu estado selecionado: ', uf);
+    setSelectedUf(uf);
   }
+
+  async function onChangeSelectState(e: ChangeEvent<HTMLSelectElement>) {
+    console.log('e.target.value: ', e.target.value);
+    // setSelectedUf(e.target.value);
+    // setSelectedCity(INITIAL_CITY);
+    // loadCities(e.target.value);
+  }
+
+  async function listCities() {
+    if (selectedUf === '0') {
+      return;
+    }
+
+    const response = await api.get(`cities/${selectedUf}/select`, {
+      params: {
+        q: ``,
+      },
+    });
+    console.log('Cidades:', response.data);
+    setCities(response.data);
+  }
+
+  useEffect(() => {
+    listCities();
+  }, [selectedUf]);
+
+  const [limit] = useState(2);
+  const [page] = useState(1);
 
   function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
     const city = event.target.value;
 
-    // setSelectedCity(city);
+    setSelectedCity(city);
   }
-
-  const loadCities = useCallback(async (state_id: string) => {
-    try {
-      if (Object.getPrototypeOf(state_id)) {
-        const response = await api.get(`cities/${state_id}/select`, {
-          params: {
-            q: ``,
-          },
-        });
-
-        setCities(response.data.itens);
-      }
-    } catch (err) {
-    } finally {
-    }
-  }, []);
 
   return (
     <Container>
@@ -151,7 +171,6 @@ const AddressForm: React.FC = () => {
                 Importante! <br />
                 Preencha todos os dados
               </p>
-              <Button type="submit">Confirmar mudanças</Button>
             </header>
 
             <fieldset>
@@ -203,29 +222,18 @@ const AddressForm: React.FC = () => {
               <legend>Localidade</legend>
               <ScheduleItem>
                 <Select
-                  name="subject"
+                  name="state"
                   label="Estado"
-                  options={[
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                  ]}
+                  id="uf"
+                  onChange={handleSelectUf}
+                  options={ufs}
                 />
-
                 <Select
-                  name="subject"
+                  name="city"
                   label="Cidade"
-                  options={[
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                    { value: 'Artes', label: 'Artes' },
-                  ]}
+                  id="city"
+                  onChange={handleSelectCity}
+                  options={cities}
                 />
               </ScheduleItem>
             </fieldset>
