@@ -4,15 +4,14 @@ import React, {
   useEffect,
   useState,
   ChangeEvent,
-  FormEvent,
   useMemo,
 } from 'react';
 import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
-import { ValueType } from 'react-select/src/types';
 
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import { uuid } from 'uuidv4';
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
@@ -25,8 +24,16 @@ import SelectCity from '../../../components/SelectCity';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';
+
 // import { AnimationContainer, Container, Content, ScheduleItem } from './styles';
-import { Container, Content, ContainerForm, ScheduleItem } from './styles';
+import {
+  Container,
+  Content,
+  ContainerForm,
+  ScheduleItem,
+  PhoneItem,
+  ProductTable,
+} from './styles';
 
 type OptionType = { label: string; value: number };
 
@@ -46,6 +53,10 @@ interface CITY {
   label: string;
 }
 
+interface Phone {
+  prefix: string;
+  number: string;
+}
 const AddressForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -159,6 +170,24 @@ const AddressForm: React.FC = () => {
     setSelectedCity(city);
   }
 
+  const [phoneItems, setPhoneItems] = useState<Phone[]>([]);
+
+  useEffect(() => {
+    console.log('==', phoneItems);
+  }, [phoneItems]);
+
+  const addNewPhoneItem = () => {
+    const prefix = formRef.current?.getFieldValue('prefix');
+    const number = formRef.current?.getFieldValue('numberFone');
+    console.log('peguei: ', prefix, number);
+
+    setPhoneItems([...phoneItems, { prefix, number }]);
+
+    // Set single field value
+    // formRef.current?.setFieldValue('prefix', '');
+    // formRef.current?.setFieldValue('number', '');
+  };
+
   return (
     <Container>
       <Content>
@@ -238,6 +267,77 @@ const AddressForm: React.FC = () => {
               </ScheduleItem>
             </fieldset>
 
+            <fieldset>
+              <legend>
+                Seu(s) Telefone(s)
+                <button type="button" onClick={addNewPhoneItem}>
+                  <span>
+                    <FiPlusCircle />
+                  </span>
+                  <strong>Adicionar mais fone</strong>
+                </button>
+              </legend>
+
+              <PhoneItem>
+                <Input
+                  label="Prefixo "
+                  name="prefix"
+                  icon={FiLock}
+                  placeholder="Prefixo"
+                />
+
+                <Input
+                  label="Número "
+                  name="numberFone"
+                  icon={FiLock}
+                  placeholder="Número"
+                />
+              </PhoneItem>
+
+              <ul>
+                <li>ioiopipoi</li>
+                {phoneItems.map((phoneItem, index) => (
+                  <li>
+                    <span>kjljklk</span>
+                    <span />
+                  </li>
+                ))}
+              </ul>
+
+              <ProductTable>
+                <thead>
+                  <tr>
+                    <th />
+                    <th>FONE</th>
+                    <th>AÇAO</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {phoneItems.map((item) => (
+                    <tr key={uuid()}>
+                      <td>
+                        <strong>{item.prefix}</strong>
+                      </td>
+
+                      <td>
+                        <div>
+                          <span>{item.prefix}</span>
+                          <strong>
+                            {item.prefix}
+                            {item.number}
+                          </strong>
+                        </div>
+                      </td>
+                      <td>
+                        <button type="button" onClick={() => {}}>
+                          lkl
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </ProductTable>
+            </fieldset>
             <footer>
               <p>
                 <img src={warningIcon} alt="Aviso importante" />

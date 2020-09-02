@@ -25,23 +25,29 @@ const SelectCity: React.FC<UF> = ({ state_id }) => {
     value: data.id,
     label: data.name,
   });
+  const [state, setState] = useState(state_id);
 
-  async function callApi(value: any) {
-    const data = await api
-      .get(`cities/${state_id}/select`)
-      .then((final: any) =>
-        final.data.filter((i: any) =>
-          i.label.toLowerCase().includes(value.toLowerCase()),
-        ),
-      );
+  useEffect(() => {
+    console.log('state_id:::', state_id);
+    setState(state_id);
+  }, [state_id]);
+
+  const callApi = async (value: any) => {
+    console.log('state_id estou funct:', state_id);
+    console.log('Search:', value);
+    /*
+     if (state_id === '0') {
+       return;
+     } */
+    let data;
+    if (state_id !== '0') {
+      data = new Promise((resolve) => {
+        resolve(api.get(`cities/${state}/select`));
+      });
+    }
 
     return data;
-  }
-  useEffect(() => {
-    if (state_id === '0') {
-    }
-    // callApi(state_id);
-  }, [state_id]);
+  };
 
   const handleSelectCity = (selectedOption: ValueType<OptionType>) => {
     const { value, label } = selectedOption as OptionType;
