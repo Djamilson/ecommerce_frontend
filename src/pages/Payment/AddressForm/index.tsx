@@ -7,20 +7,24 @@ import React, {
   useMemo,
 } from 'react';
 import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
+import {
+  MdRemoveCircleOutline,
+  MdAddCircleOutline,
+  MdDelete,
+} from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 
+import { Scope } from '@unform/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
-import { uuid } from 'uuidv4';
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
 import warningIcon from '../../../assets/images/icons/warning.svg';
-import Button from '../../../components/Button';
 import Input from '../../../components/Form/Input';
+import InputMask from '../../../components/Form/InputMask';
 import Select from '../../../components/Form/Select';
 import Header from '../../../components/Headers/Header';
-import SelectCity from '../../../components/SelectCity';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';
@@ -32,7 +36,7 @@ import {
   ContainerForm,
   ScheduleItem,
   PhoneItem,
-  ProductTable,
+  PhoneTable,
 } from './styles';
 
 type OptionType = { label: string; value: number };
@@ -85,18 +89,18 @@ const AddressForm: React.FC = () => {
         });
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('Nome obrigatório'),
-          email: Yup.string()
-            .required('E-mail obrigatório')
-            .email('Digite um email válido'),
-          password: Yup.string().min(6, 'No mínimo 6 digitos'),
+          cpf: Yup.string().required('CPF obrigatório'),
+          rg: Yup.string().required('RG obrigatório'),
+          number: Yup.string().required('Número obrigatório'),
+          street: Yup.string().required('Quadra/Rua obrigatório'),
         });
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        await api.post('/users', data);
-        history.push('/');
+        console.log('Meus dados:', data);
+        // await api.post('/users', data);
+        // history.push('/');
 
         addToast({
           type: 'success',
@@ -176,17 +180,37 @@ const AddressForm: React.FC = () => {
     console.log('==', phoneItems);
   }, [phoneItems]);
 
-  const addNewPhoneItem = () => {
-    const prefix = formRef.current?.getFieldValue('prefix');
-    const number = formRef.current?.getFieldValue('numberFone');
-    console.log('peguei: ', prefix, number);
+  const addNewPhoneItem = useCallback(() => {
+    const prefix = formRef.current?.getFieldValue('phone.prefix');
+    const newNumber = formRef.current?.getFieldValue('phone.number');
 
-    setPhoneItems([...phoneItems, { prefix, number }]);
+    const index = { prefix, number: newNumber };
+
+    setPhoneItems([
+      ...phoneItems.filter(
+        (phone: Phone) =>
+          phone.prefix !== index.prefix && phone.number !== index.number,
+      ),
+      index,
+    ]);
+    // setPhoneItems([...phoneItems, { prefix, number: newNumber }]);
 
     // Set single field value
-    // formRef.current?.setFieldValue('prefix', '');
-    // formRef.current?.setFieldValue('number', '');
-  };
+    formRef.current?.setFieldValue('phone.prefix', '');
+    formRef.current?.setFieldValue('phone.number', '');
+  }, [phoneItems]);
+
+  const removeItem = useCallback(
+    (index: Phone) => {
+      setPhoneItems(
+        phoneItems.filter(
+          (phone: Phone) =>
+            phone.prefix !== index.prefix && phone.number !== index.number,
+        ),
+      );
+    },
+    [phoneItems],
+  );
 
   return (
     <Container>
@@ -204,7 +228,7 @@ const AddressForm: React.FC = () => {
 
             <fieldset>
               <legend>
-                Seu endereço
+                Documentos
                 <button type="submit">
                   <span>
                     <FiCheck />
@@ -212,17 +236,35 @@ const AddressForm: React.FC = () => {
                   <strong>Salvar</strong>
                 </button>
               </legend>
+
+              <InputMask
+                id="idCEP"
+                mask="999.999.999-99"
+                name="cpf"
+                placeholder="000.000.000-00"
+                icon={FiLock}
+                label="CPF"
+              />
+
+              <Input placeholder="RG" name="rg" icon={FiLock} label="RG" />
+            </fieldset>
+
+            <fieldset>
+              <legend>Seu endereço</legend>
               <Input
                 placeholder="Rua/quadra"
                 name="street"
                 icon={FiLock}
                 label="Rua/quadra"
               />
-              <Input
-                label="Número Lote/Casa"
+
+              <InputMask
+                id="idNumberHouse"
+                mask="999999"
                 name="number"
-                icon={FiLock}
                 placeholder="Número"
+                icon={FiLock}
+                label="Número Lote/Casa"
               />
 
               <Input
@@ -239,7 +281,9 @@ const AddressForm: React.FC = () => {
                 label="Bairro"
               />
 
-              <Input
+              <InputMask
+                id="idZipCode"
+                mask="999999"
                 placeholder="CEP"
                 name="zip_code"
                 icon={FiLock}
@@ -277,66 +321,55 @@ const AddressForm: React.FC = () => {
                   <strong>Adicionar mais fone</strong>
                 </button>
               </legend>
-
-              <PhoneItem>
-                <Input
-                  label="Prefixo "
-                  name="prefix"
-                  icon={FiLock}
-                  placeholder="Prefixo"
-                />
-
-                <Input
-                  label="Número "
-                  name="numberFone"
-                  icon={FiLock}
-                  placeholder="Número"
-                />
-              </PhoneItem>
-
-              <ul>
-                <li>ioiopipoi</li>
-                {phoneItems.map((phoneItem, index) => (
-                  <li>
-                    <span>kjljklk</span>
-                    <span />
-                  </li>
-                ))}
-              </ul>
-
-              <ProductTable>
+              <Scope path="phone">
+                <PhoneItem>
+                  <InputMask
+                    id="idPrefix"
+                    mask="(99)"
+                    placeholder="Prefixo"
+                    name="prefix"
+                    icon={FiLock}
+                    label="Prefixo"
+                  />
+                  <InputMask
+                    id="idNumber"
+                    mask="9 9999-9999"
+                    placeholder="Número"
+                    name="number"
+                    icon={FiLock}
+                    label="Número"
+                  />
+                </PhoneItem>
+              </Scope>
+              <PhoneTable>
                 <thead>
                   <tr>
-                    <th />
+                    <th>#</th>
                     <th>FONE</th>
                     <th>AÇAO</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {phoneItems.map((item) => (
-                    <tr key={uuid()}>
+                  {phoneItems.map((item, index) => (
+                    <tr key={Number(index)}>
                       <td>
-                        <strong>{item.prefix}</strong>
+                        <strong>{index + 1}</strong>
                       </td>
-
                       <td>
                         <div>
                           <span>{item.prefix}</span>
-                          <strong>
-                            {item.prefix}
-                            {item.number}
-                          </strong>
+                          <strong>{item.number}</strong>
                         </div>
                       </td>
                       <td>
-                        <button type="button" onClick={() => {}}>
-                          lkl
+                        <button type="button" onClick={() => removeItem(item)}>
+                          <MdDelete size={20} color="#7159c1" />
                         </button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
-              </ProductTable>
+              </PhoneTable>
             </fieldset>
             <footer>
               <p>

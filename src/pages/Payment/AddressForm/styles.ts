@@ -215,10 +215,7 @@ export const PhoneItem = styled.div`
   }
 `;
 
-
-
-
-export const ProductTable = styled.table`
+export const PhoneTable = styled.table`
   width: 100%;
 
   thead th {
@@ -232,21 +229,17 @@ export const ProductTable = styled.table`
     border-bottom: 1px solid #eee;
   }
 
-  img {
-    height: 100px;
-  }
-
   strong {
     color: #333;
     display: block;
+    font-size: 16px;
+    margin-left: 7px;
   }
 
   span {
     color: #333;
     display: block;
-    margin-top: 5px;
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 16px;
   }
 
   div {
@@ -266,21 +259,5 @@ export const ProductTable = styled.table`
     background: none;
     border: 0;
     padding: 6px;
-  }
-`;
-
-export const Total = styled.div`
-  display: flex;
-  align-items: baseline;
-
-  span {
-    color: #999;
-    font-weight: bold;
-  }
-
-  strong {
-    font-size: 28px;
-    margin-left: 5px;
-    color: #3b3a3a;
   }
 `;
