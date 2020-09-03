@@ -203,15 +203,23 @@ export const ScheduleItem = styled.div`
   @media (min-width: 700px) {
     display: grid;
     grid-template-columns: 2fr 2fr;
-    column-gap: 2.6rem;
+    column-gap: 1.6rem;
+  }
+`;
+
+export const AddressItem = styled.div`
+  @media (min-width: 700px) {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    column-gap: 0.2rem;
   }
 `;
 
 export const PhoneItem = styled.div`
   @media (min-width: 700px) {
     display: grid;
-    grid-template-columns: 2fr 2fr;
-    column-gap: 2.6rem;
+    grid-template-columns: 25% 75%;
+    column-gap: 0.6rem;
   }
 `;
 

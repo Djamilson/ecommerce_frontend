@@ -37,6 +37,7 @@ import {
   ScheduleItem,
   PhoneItem,
   PhoneTable,
+  AddressItem,
 } from './styles';
 
 type OptionType = { label: string; value: number };
@@ -193,7 +194,6 @@ const AddressForm: React.FC = () => {
       ),
       index,
     ]);
-    // setPhoneItems([...phoneItems, { prefix, number: newNumber }]);
 
     // Set single field value
     formRef.current?.setFieldValue('phone.prefix', '');
@@ -236,59 +236,60 @@ const AddressForm: React.FC = () => {
                   <strong>Salvar</strong>
                 </button>
               </legend>
-
-              <InputMask
-                id="idCEP"
-                mask="999.999.999-99"
-                name="cpf"
-                placeholder="000.000.000-00"
-                icon={FiLock}
-                label="CPF"
-              />
-
-              <Input placeholder="RG" name="rg" icon={FiLock} label="RG" />
+              <ScheduleItem>
+                <InputMask
+                  id="idCEP"
+                  mask="999.999.999-99"
+                  name="cpf"
+                  placeholder="000.000.000-00"
+                  icon={FiLock}
+                  label="CPF"
+                />
+                <Input placeholder="RG" name="rg" icon={FiLock} label="RG" />
+              </ScheduleItem>
             </fieldset>
 
             <fieldset>
               <legend>Seu endereço</legend>
-              <Input
-                placeholder="Rua/quadra"
-                name="street"
-                icon={FiLock}
-                label="Rua/quadra"
-              />
+              <AddressItem>
+                <Input
+                  placeholder="Rua/quadra"
+                  name="street"
+                  icon={FiLock}
+                  label="Rua/quadra"
+                />
 
-              <InputMask
-                id="idNumberHouse"
-                mask="999999"
-                name="number"
-                placeholder="Número"
-                icon={FiLock}
-                label="Número Lote/Casa"
-              />
-
+                <InputMask
+                  id="idNumberHouse"
+                  mask="999999"
+                  name="number"
+                  placeholder="Número"
+                  icon={FiLock}
+                  label="Número Lote/Casa"
+                />
+              </AddressItem>
               <Input
                 placeholder="Complemento"
                 name="complement"
                 icon={FiLock}
                 label="Complemento"
               />
-
-              <Input
-                placeholder="Bairro"
-                name="neighborhood"
-                icon={FiLock}
-                label="Bairro"
-              />
-
-              <InputMask
-                id="idZipCode"
-                mask="999999"
-                placeholder="CEP"
-                name="zip_code"
-                icon={FiLock}
-                label="CEP"
-              />
+              <ScheduleItem>
+                <Input
+                  placeholder="Bairro"
+                  name="neighborhood"
+                  icon={FiLock}
+                  label="Bairro"
+                />
+                <InputMask
+                  id="idZipCode"
+                  mask="999999"
+                  placeholder="CEP"
+                  name="zip_code"
+                  icon={FiLock}
+                  label="CEP"
+                />
+              </ScheduleItem>
             </fieldset>
 
             <fieldset>
@@ -341,35 +342,41 @@ const AddressForm: React.FC = () => {
                   />
                 </PhoneItem>
               </Scope>
-              <PhoneTable>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>FONE</th>
-                    <th>AÇAO</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {phoneItems.map((item, index) => (
-                    <tr key={Number(index)}>
-                      <td>
-                        <strong>{index + 1}</strong>
-                      </td>
-                      <td>
-                        <div>
-                          <span>{item.prefix}</span>
-                          <strong>{item.number}</strong>
-                        </div>
-                      </td>
-                      <td>
-                        <button type="button" onClick={() => removeItem(item)}>
-                          <MdDelete size={20} color="#7159c1" />
-                        </button>
-                      </td>
+
+              {phoneItems.length > 0 && (
+                <PhoneTable>
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>FONE</th>
+                      <th>AÇAO</th>
                     </tr>
-                  ))}
-                </tbody>
-              </PhoneTable>
+                  </thead>
+                  <tbody>
+                    {phoneItems.map((item, index) => (
+                      <tr key={Number(index)}>
+                        <td>
+                          <strong>{index + 1}</strong>
+                        </td>
+                        <td>
+                          <div>
+                            <span>{item.prefix}</span>
+                            <strong>{item.number}</strong>
+                          </div>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item)}
+                          >
+                            <MdDelete size={20} color="#7159c1" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </PhoneTable>
+              )}
             </fieldset>
             <footer>
               <p>
