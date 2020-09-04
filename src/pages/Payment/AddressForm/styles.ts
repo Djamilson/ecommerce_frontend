@@ -6,17 +6,14 @@ import { colors } from '../../../styles';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-
-  border-radius: 4px;
-  padding: 20px;
+  margin: 0 3rem;
 
   @media (min-width: 700px) {
-    max-width: 90vw;
+    max-width: 100vw;
   }
 `;
 
 export const Content = styled.div`
-  margin-left: 2rem;
   max-width: 100vw;
   margin-top: 1rem;
 `;
@@ -34,11 +31,11 @@ export const ContainerForm = styled.div`
     header {
       background: ${colors.colorBoxFooter};
       border-bottom: 1px solid ${colors.colorLineInWhite};
-      margin-top: -0.4rem;
-      margin-bottom: 5rem;
+      width: 85vw;
       height: 3.5rem;
 
-      width: 83vw;
+      margin-top: -0.4rem;
+      margin-bottom: 5rem;
       margin-left: -6.4rem;
 
       @media (min-width: 700px) {
@@ -184,7 +181,7 @@ export const ContainerForm = styled.div`
     }
 
     footer {
-      width: 80vw;
+      width: 85vw;
       margin-left: -6.4rem;
       padding: 4rem 2.4rem;
       background: ${colors.colorBoxFooter};

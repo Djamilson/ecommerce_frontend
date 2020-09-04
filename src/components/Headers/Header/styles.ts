@@ -79,7 +79,7 @@ export const HeaderContainer = styled.div`
 
 export const Cart = styled(Link)`
   display: flex;
-  align-items: center;
+  margin-left: 45%;
 
   text-decoration: none;
   transition: opacity 0.2s;
