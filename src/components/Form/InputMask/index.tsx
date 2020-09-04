@@ -65,7 +65,7 @@ const InputMask: React.FC<Props> = ({
         isFilled={isFilled}
         isFocused={isFocused}
       >
-        {Icon && <Icon size={20} />}
+        {Icon && <Icon size={16} />}
         <ReactInputMask
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}

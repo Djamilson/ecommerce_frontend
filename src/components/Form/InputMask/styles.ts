@@ -22,23 +22,21 @@ export const InputBlock = styled.div`
   }
 
   label {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
   }
 `;
 
 export const Container = styled.div<ContainerProps>`
   background: ${colors.colorInputBackground};
-  border-radius: 10px;
+  border-radius: 7px;
   border: 1px solid ${colors.colorLineInWhite};
-  padding: 12.8px;
-  width: 100%;
-
-  border-radius: 10px;
-  padding: 16px;
+  padding: 10px 15px;
   width: 100%;
   color: #666360;
 
+  display: flex;
+  align-items: center;
   display: flex;
   align-items: center;
 
@@ -69,7 +67,7 @@ export const Container = styled.div<ContainerProps>`
   input {
     flex: 1;
     border: 0;
-    font-size: 1.15rem;
+    font-size: 0.9rem;
     color: ${colors.colorPrimary};
     transition: background-color 5000s ease-in-out 0s;
     background: transparent;
@@ -81,7 +79,7 @@ export const Container = styled.div<ContainerProps>`
   }
 
   svg {
-    margin-right: 16px;
+    margin-right: 10px;
   }
 `;
 

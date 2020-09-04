@@ -36,8 +36,9 @@ export const ContainerForm = styled.div`
       border-bottom: 1px solid ${colors.colorLineInWhite};
       margin-top: -0.4rem;
       margin-bottom: 5rem;
+      height: 3.5rem;
 
-      width: 72vw;
+      width: 83vw;
       margin-left: -6.4rem;
 
       @media (min-width: 700px) {
@@ -55,25 +56,24 @@ export const ContainerForm = styled.div`
 
       button {
         width: 35%;
-        height: 3.5rem;
+        height: 2.8rem;
         background: ${colors.colorSecundary};
         color: ${colors.colorButtonText};
         border: 0;
         border-radius: 0.6rem;
 
-        font: 700 1.3rem Archivo;
+        font: 700 1rem Archivo;
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
         transition: background-color 0.2s;
-        margin-top: 2.2rem;
 
         span {
           display: block;
           background: rgba(0, 0, 0, 0.08);
           width: 52px;
-          height: 3.5rem;
+          height: 2.8rem;
           border-radius: 0.6rem 0 0 0.6rem;
 
           display: flex;
@@ -102,8 +102,8 @@ export const ContainerForm = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
-        line-height: 1.4rem;
+        font-size: 1rem;
+        line-height: 1.6rem;
         color: ${colors.colorTextcomplement};
 
         img {
@@ -114,40 +114,41 @@ export const ContainerForm = styled.div`
 
     fieldset {
       border: 0;
-      padding: 0 2.4rem;
+      padding: 0rem;
+      margin-top: -2rem;
 
       legend {
-        font: 700 1.7rem Archivo;
+        font: 700 1.3rem Archivo;
         color: ${colors.colorTextTitle};
         margin-bottom: 1.4rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        padding-bottom: 0.6rem;
         border-bottom: 1px solid ${colors.colorLineInWhite};
 
         button {
           width: 35%;
-          height: 3.5rem;
+          height: 2.8rem;
           background: ${colors.colorSecundary};
           color: ${colors.colorButtonText};
           border: 0;
           border-radius: 0.6rem;
 
-          font: 700 1.3rem Archivo;
+          font: 700 1.1rem Archivo;
           display: flex;
           align-items: center;
           justify-content: center;
           text-decoration: none;
           transition: background-color 0.2s;
-          margin-top: 2.2rem;
+          margin-top: 0.2rem;
+          margin-bottom: 1.2rem;
 
           span {
             display: block;
             background: rgba(0, 0, 0, 0.08);
             width: 52px;
-            height: 3.5rem;
+            height: 2.8rem;
             border-radius: 0.6rem 0 0 0.6rem;
 
             display: flex;
@@ -207,8 +208,8 @@ export const ContainerForm = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
-        line-height: 2.4rem;
+        font-size: 1.1rem;
+        line-height: 1.4rem;
         color: ${colors.colorTextcomplement};
 
         img {

@@ -12,7 +12,7 @@ export const SelectBlock = styled.div`
   }
 
   label {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
   }
 
@@ -26,7 +26,7 @@ export const SelectBlock = styled.div`
     } /* Remove seta padrão do IE*/
 
     display: block;
-    font-size: 16px;
+    font-size: 0.9rem;
     font-family: sans-serif;
     font-weight: 500;
     color: #444;
@@ -65,10 +65,10 @@ interface ContainerProps {
 
 export const Container = styled.div<ContainerProps>`
   background: ${colors.colorInputBackground};
-  border-radius: 10px;
+  border-radius: 7px;
   border: 1px solid ${colors.colorLineInWhite};
-  
- padding: 0px;
+
+  padding: 0px;
   width: 100%;
 
 
@@ -97,7 +97,7 @@ export const Container = styled.div<ContainerProps>`
   input {
     flex: 1;
     border: 0;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     color: ${colors.colorPrimary};
     transition: background-color 5000s ease-in-out 0s;
     background: transparent;
