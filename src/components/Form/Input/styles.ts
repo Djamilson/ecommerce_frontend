@@ -25,6 +25,7 @@ export const InputBlock = styled.div`
     font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
     margin-bottom: 0.2rem;
+    font-weight: bold;
   }
 `;
 
