@@ -7,32 +7,32 @@ import React, {
 } from 'react';
 import { IconBaseProps } from 'react-icons';
 import { FiAlertCircle } from 'react-icons/fi';
+import ReactInputMask, { Props as InputProps } from 'react-input-mask';
 
 import { useField } from '@unform/core';
 
 import { colors } from '../../../styles';
 import { Container, InputBlock, Error } from './styles';
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface Props extends InputProps {
   name: string;
   label?: string;
   containerStyle?: object;
-  icon: React.ComponentType<IconBaseProps>;
+  icon?: React.ComponentType<IconBaseProps>;
 }
 
-const Input: React.FC<InputProps> = ({
+const InputMask: React.FC<Props> = ({
   name,
   label,
   containerStyle = {},
   icon: Icon,
   ...rest
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef(null);
+  const { fieldName, registerField, defaultValue, error } = useField(name);
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
-
-  const { fieldName, defaultValue, error, registerField } = useField(name);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -40,7 +40,7 @@ const Input: React.FC<InputProps> = ({
 
   const handleInputBlur = useCallback(() => {
     setIsFocused(false);
-    setIsFilled(!!inputRef.current?.value);
+    // setIsFilled(!!inputRef.current?.value);
   }, []);
 
   useEffect(() => {
@@ -48,9 +48,14 @@ const Input: React.FC<InputProps> = ({
       name: fieldName,
       ref: inputRef.current,
       path: 'value',
+      setValue(ref: any, value: string) {
+        ref.setInputValue(value);
+      },
+      clearValue(ref: any) {
+        ref.setInputValue('');
+      },
     });
   }, [fieldName, registerField]);
-
   return (
     <InputBlock>
       <label htmlFor={name}>{label}</label>
@@ -61,13 +66,14 @@ const Input: React.FC<InputProps> = ({
         isFocused={isFocused}
       >
         {Icon && <Icon size={16} />}
-        <input
+        <ReactInputMask
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
           defaultValue={defaultValue}
           ref={inputRef}
           {...rest}
         />
+
         {error && (
           <Error title={error}>
             <FiAlertCircle color={colors.fourth} size={20} />
@@ -77,5 +83,4 @@ const Input: React.FC<InputProps> = ({
     </InputBlock>
   );
 };
-
-export default Input;
+export default InputMask;

@@ -24,7 +24,6 @@ export const InputBlock = styled.div`
   label {
     font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
-    margin-bottom: 0.2rem;
   }
 `;
 
@@ -36,6 +35,8 @@ export const Container = styled.div<ContainerProps>`
   width: 100%;
   color: #666360;
 
+  display: flex;
+  align-items: center;
   display: flex;
   align-items: center;
 

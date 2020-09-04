@@ -16,7 +16,8 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
-  max-width: 80vw;
+  margin-left: 2rem;
+  max-width: 100vw;
   margin-top: 1rem;
 `;
 
@@ -35,8 +36,9 @@ export const ContainerForm = styled.div`
       border-bottom: 1px solid ${colors.colorLineInWhite};
       margin-top: -0.4rem;
       margin-bottom: 5rem;
+      height: 3.5rem;
 
-      width: 80vw;
+      width: 83vw;
       margin-left: -6.4rem;
 
       @media (min-width: 700px) {
@@ -53,28 +55,46 @@ export const ContainerForm = styled.div`
       }
 
       button {
-        width: 100%;
-        height: 3.6rem;
+        width: 35%;
+        height: 2.8rem;
         background: ${colors.colorSecundary};
         color: ${colors.colorButtonText};
         border: 0;
-        border-radius: 0.8rem;
+        border-radius: 0.6rem;
 
-        font: 700 1.3rem Archivo;
+        font: 700 1rem Archivo;
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
         transition: background-color 0.2s;
-        margin-top: 0rem;
 
-        &:hover {
-          background: ${colors.colorSecundaryDark};
+        span {
+          display: block;
+          background: rgba(0, 0, 0, 0.08);
+          width: 52px;
+          height: 2.8rem;
+          border-radius: 0.6rem 0 0 0.6rem;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+          svg {
+            color: #fff;
+            width: 20px;
+            height: 20px;
+          }
         }
 
-        @media (min-width: 700px) {
-          width: 20rem;
-          margin-top: 0;
+        strong {
+          flex: 1;
+          text-align: center;
+          color: #fff;
+        }
+
+        &:hover {
+          background: ${shade(0.2, `${colors.colorSecundary}`)};
         }
       }
 
@@ -82,8 +102,8 @@ export const ContainerForm = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
-        line-height: 1.4rem;
+        font-size: 1rem;
+        line-height: 1.6rem;
         color: ${colors.colorTextcomplement};
 
         img {
@@ -94,40 +114,41 @@ export const ContainerForm = styled.div`
 
     fieldset {
       border: 0;
-      padding: 0 2.4rem;
+      padding: 0rem;
+      margin-top: -2rem;
 
       legend {
-        font: 700 1.7rem Archivo;
+        font: 700 1.3rem Archivo;
         color: ${colors.colorTextTitle};
         margin-bottom: 1.4rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        padding-bottom: 0.6rem;
         border-bottom: 1px solid ${colors.colorLineInWhite};
 
         button {
           width: 35%;
-          height: 3.5rem;
+          height: 2.8rem;
           background: ${colors.colorSecundary};
           color: ${colors.colorButtonText};
           border: 0;
           border-radius: 0.6rem;
 
-          font: 700 1.3rem Archivo;
+          font: 700 1.1rem Archivo;
           display: flex;
           align-items: center;
           justify-content: center;
           text-decoration: none;
           transition: background-color 0.2s;
-          margin-top: 2.2rem;
+          margin-top: 0.2rem;
+          margin-bottom: 1.2rem;
 
           span {
             display: block;
             background: rgba(0, 0, 0, 0.08);
             width: 52px;
-            height: 3.5rem;
+            height: 2.8rem;
             border-radius: 0.6rem 0 0 0.6rem;
 
             display: flex;
@@ -187,8 +208,8 @@ export const ContainerForm = styled.div`
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.4rem;
-        line-height: 2.4rem;
+        font-size: 1.1rem;
+        line-height: 1.4rem;
         color: ${colors.colorTextcomplement};
 
         img {
@@ -203,6 +224,69 @@ export const ScheduleItem = styled.div`
   @media (min-width: 700px) {
     display: grid;
     grid-template-columns: 2fr 2fr;
-    column-gap: 2.6rem;
+    column-gap: 1.6rem;
+  }
+`;
+
+export const AddressItem = styled.div`
+  @media (min-width: 700px) {
+    display: grid;
+    grid-template-columns: 75% 25%;
+    column-gap: 0.2rem;
+  }
+`;
+
+export const PhoneItem = styled.div`
+  @media (min-width: 700px) {
+    display: grid;
+    grid-template-columns: 25% 75%;
+    column-gap: 0.6rem;
+  }
+`;
+
+export const PhoneTable = styled.table`
+  width: 100%;
+
+  thead th {
+    color: #999;
+    text-align: left;
+    padding: 12px;
+  }
+
+  tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+  }
+
+  strong {
+    color: #333;
+    display: block;
+    font-size: 16px;
+    margin-left: 7px;
+  }
+
+  span {
+    color: #333;
+    display: block;
+    font-size: 16px;
+  }
+
+  div {
+    display: flex;
+    align-items: center;
+
+    input {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      color: #666;
+      padding: 6px;
+      width: 50px;
+    }
+  }
+
+  button {
+    background: none;
+    border: 0;
+    padding: 6px;
   }
 `;

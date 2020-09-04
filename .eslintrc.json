@@ -37,6 +37,12 @@
     "react/prop-types": "off",
     "no-unused-expressions": "off",
     "import/no-duplicates": "off",
+    "prefer-destructuring": ["error", {
+      "array": true,
+      "object": true
+    }, {
+      "enforceForRenamedProperties": false
+    }],
     "@typescript-eslint/camelcase": "off",
     "camelcase": "off",
     "react/jsx-filename-extension": [

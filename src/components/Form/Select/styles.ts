@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-import signInBackgroundImg from '../../../assets/images/icons/success-check-icon.svg';
 import { colors } from '../../../styles';
+import Tooltip from '../../Tooltip';
 
 export const SelectBlock = styled.div`
   display: flex;
@@ -12,7 +12,7 @@ export const SelectBlock = styled.div`
   }
 
   label {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
   }
 
@@ -26,7 +26,7 @@ export const SelectBlock = styled.div`
     } /* Remove seta padrão do IE*/
 
     display: block;
-    font-size: 16px;
+    font-size: 0.9rem;
     font-family: sans-serif;
     font-weight: 500;
     color: #444;
@@ -36,7 +36,7 @@ export const SelectBlock = styled.div`
     max-width: 100%; /* useful when width is set to anything other than 100% */
     box-sizing: border-box;
     margin: 0;
-    border: 1px solid #aaa;
+    border: 0px solid #aaa;
     box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
     border-radius: 0.5em;
 
@@ -55,29 +55,77 @@ export const SelectBlock = styled.div`
     background-size: 0.65em auto, 100%;
     outline: 0;
   }
+`;
+
+interface ContainerProps {
+  isFocused: boolean;
+  isFilled: boolean;
+  isErrored: boolean;
+}
+
+export const Container = styled.div<ContainerProps>`
+  background: ${colors.colorInputBackground};
+  border-radius: 7px;
+  border: 1px solid ${colors.colorLineInWhite};
+
+  padding: 0px;
+  width: 100%;
+
+
+
+
+  ${(props) =>
+    props.isErrored &&
+    css`
+      border-color: ${colors.fourth};
+    `}
+
+  ${(props) =>
+    props.isFocused &&
+    css`
+      color: ${colors.colorPrimary};
+      border-color: ${colors.colorPrimaryDarker};
+    `}
+
+  ${(props) =>
+    props.isFilled &&
+    css`
+      color: ${colors.colorPrimaryDarker};
+    `}
+
 
   input {
-    width: 100%;
-    height: 5.6rem;
-    margin-top: 0.4rem;
-    border-radius: 0.8rem;
+    flex: 1;
+    border: 0;
+    font-size: 1.1rem;
+    color: ${colors.colorPrimary};
+    transition: background-color 5000s ease-in-out 0s;
+    background: transparent;
+    -webkit-text-fill-color: ${colors.colorTextcomplement};
 
-    background: ${colors.colorInputBackground};
-    border: 1px solid ${colors.colorLineInWhite};
-    outline: 0;
-    padding: 0 3.6rem;
-    font: 1.6rem Archivo;
+    &::placeholder {
+      color: ${colors.colorTextInPrimary};
+    }
   }
 
-  &:focus-within::after {
-    width: calc(100% - 3.2rem);
-    height: 2px;
+  svg {
+    margin-right: 16px;
+  }
+`;
 
-    content: '';
+export const Error = styled(Tooltip)`
+  height: 20px;
+  margin-left: 16px;
 
-    position: absolute;
-    left: 1.6rem;
-    right: 1.6rem;
-    bottom: 0;
+  svg {
+    margin: 0;
+  }
+
+  span {
+    background: ${colors.fourth};
+    color: ${colors.sixth};
+    &::before {
+      border-color: ${colors.fourth} transparent;
+    }
   }
 `;
