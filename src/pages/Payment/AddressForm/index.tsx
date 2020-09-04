@@ -7,16 +7,21 @@ import React, {
   useMemo,
 } from 'react';
 import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
-import {
-  MdRemoveCircleOutline,
-  MdAddCircleOutline,
-  MdDelete,
-} from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { useHistory } from 'react-router-dom';
 
 import { Scope } from '@unform/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import {
+  format,
+  isValid,
+  isDate,
+  isAfter,
+  parse,
+  differenceInCalendarYears,
+} from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
@@ -38,14 +43,17 @@ import {
   PhoneItem,
   PhoneTable,
   AddressItem,
+  Calendar,
 } from './styles';
+
+import 'react-day-picker/lib/style.css';
 
 type OptionType = { label: string; value: number };
 
 interface SignUpFormData {
   name: string;
   email: string;
-  pessword: string;
+  birdthDate: Date;
 }
 
 interface UF {
@@ -62,6 +70,7 @@ interface Phone {
   prefix: string;
   number: string;
 }
+
 const AddressForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
@@ -79,11 +88,13 @@ const AddressForm: React.FC = () => {
   const [ufs, setUfs] = useState<UF[]>([]);
   const [cities, setCities] = useState<CITY[]>([]);
 
+  const [phoneItems, setPhoneItems] = useState<Phone[]>([]);
+
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
-
+        const today = new Date();
         addLoading({
           loading: true,
           description: 'Aguarde ...',
@@ -94,10 +105,24 @@ const AddressForm: React.FC = () => {
           rg: Yup.string().required('RG obrigatório'),
           number: Yup.string().required('Número obrigatório'),
           street: Yup.string().required('Quadra/Rua obrigatório'),
+          complement: Yup.string(),
+          neighborhood: Yup.string().required('Bairro obrigatório'),
+          zip_code: Yup.string().required('CEP obrigatório'),
+          city: Yup.string().required('City obrigatório'),
         });
+
         await schema.validate(data, {
           abortEarly: false,
         });
+
+        if (phoneItems.length < 1) {
+          addToast({
+            type: 'success',
+            title: 'Cadastro realizado com sucesso!',
+            description: 'Você já pode fazer seu logon no Gobarber!',
+          });
+          return;
+        }
 
         console.log('Meus dados:', data);
         // await api.post('/users', data);
@@ -175,8 +200,6 @@ const AddressForm: React.FC = () => {
     setSelectedCity(city);
   }
 
-  const [phoneItems, setPhoneItems] = useState<Phone[]>([]);
-
   useEffect(() => {
     console.log('==', phoneItems);
   }, [phoneItems]);
@@ -212,6 +235,31 @@ const AddressForm: React.FC = () => {
     [phoneItems],
   );
 
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const handleIsValideDate = useCallback(
+    (e) => {
+      const parsedDate = isDate(e.target.value)
+        ? e.target.value
+        : parse(e.target.value, 'dd/MM/yyyy', new Date());
+
+      if (
+        !isValid(new Date(parsedDate)) ||
+        !isAfter(new Date(), parsedDate) ||
+        differenceInCalendarYears(new Date(), new Date(parsedDate)) > 100
+      ) {
+        addToast({
+          type: 'error',
+          title: 'Atenção!',
+          description: 'Sua data de nascimento está invalida, tente novamente!',
+        });
+
+        formRef.current?.setFieldValue('birdthDate', '');
+      }
+    },
+    [addToast],
+  );
+
   return (
     <Container>
       <Content>
@@ -224,18 +272,16 @@ const AddressForm: React.FC = () => {
                 Importante! <br />
                 Preencha todos os dados
               </p>
+              <button type="submit">
+                <span>
+                  <FiCheck />
+                </span>
+                <strong>Salvar os dados</strong>
+              </button>
             </header>
 
             <fieldset>
-              <legend>
-                Documentos
-                <button type="submit">
-                  <span>
-                    <FiCheck />
-                  </span>
-                  <strong>Salvar</strong>
-                </button>
-              </legend>
+              <legend>Dados Pessoais</legend>
               <ScheduleItem>
                 <InputMask
                   id="idCEP"
@@ -245,7 +291,25 @@ const AddressForm: React.FC = () => {
                   icon={FiLock}
                   label="CPF"
                 />
+
+                <InputMask
+                  id="idBirdthDate"
+                  mask="99/99/9999"
+                  name="birdthDate"
+                  placeholder="00/00/0000"
+                  icon={FiLock}
+                  label="Data de Nascimento"
+                  onBlur={(e) => handleIsValideDate(e)}
+                />
+              </ScheduleItem>
+              <ScheduleItem>
                 <Input placeholder="RG" name="rg" icon={FiLock} label="RG" />
+                <Input
+                  placeholder="Órgão Expedidor RG"
+                  name="rgss"
+                  icon={FiLock}
+                  label="Órgão expedidor RG"
+                />
               </ScheduleItem>
             </fieldset>
 

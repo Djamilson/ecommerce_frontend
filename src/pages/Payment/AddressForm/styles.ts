@@ -1,7 +1,14 @@
 import { shade } from 'polished';
 import styled from 'styled-components';
 
+import Tooltip from '../../../components/Tooltip';
 import { colors } from '../../../styles';
+
+interface ContainerProps {
+  isFocused: boolean;
+  isFilled: boolean;
+  isErrored: boolean;
+}
 
 export const Container = styled.div`
   display: flex;
@@ -36,7 +43,7 @@ export const ContainerForm = styled.div`
       margin-top: -0.4rem;
       margin-bottom: 5rem;
 
-      width: 80vw;
+      width: 72vw;
       margin-left: -6.4rem;
 
       @media (min-width: 700px) {
@@ -53,12 +60,12 @@ export const ContainerForm = styled.div`
       }
 
       button {
-        width: 100%;
-        height: 3.6rem;
+        width: 35%;
+        height: 3.5rem;
         background: ${colors.colorSecundary};
         color: ${colors.colorButtonText};
         border: 0;
-        border-radius: 0.8rem;
+        border-radius: 0.6rem;
 
         font: 700 1.3rem Archivo;
         display: flex;
@@ -66,15 +73,34 @@ export const ContainerForm = styled.div`
         justify-content: center;
         text-decoration: none;
         transition: background-color 0.2s;
-        margin-top: 0rem;
+        margin-top: 2.2rem;
 
-        &:hover {
-          background: ${colors.colorSecundaryDark};
+        span {
+          display: block;
+          background: rgba(0, 0, 0, 0.08);
+          width: 52px;
+          height: 3.5rem;
+          border-radius: 0.6rem 0 0 0.6rem;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+          svg {
+            color: #fff;
+            width: 20px;
+            height: 20px;
+          }
         }
 
-        @media (min-width: 700px) {
-          width: 20rem;
-          margin-top: 0;
+        strong {
+          flex: 1;
+          text-align: center;
+          color: #fff;
+        }
+
+        &:hover {
+          background: ${shade(0.2, `${colors.colorSecundary}`)};
         }
       }
 
@@ -267,5 +293,114 @@ export const PhoneTable = styled.table`
     background: none;
     border: 0;
     padding: 6px;
+  }
+`;
+
+export const Calendar = styled.aside`
+  width: 380px;
+
+  .DayPicker {
+    background: #28262e;
+    border-radius: 10px;
+  }
+
+  .DayPicker-wrapper {
+    padding-bottom: 0;
+  }
+
+  .DayPicker,
+  .DayPicker-Month {
+    width: 100%;
+  }
+
+  .DayPicker-Month {
+    border-collapse: separate;
+    border-spacing: 8px;
+    margin: 16px;
+  }
+
+  .DayPicker-Day {
+    width: 40px;
+    height: 40px;
+  }
+
+  .DayPicker-Day--available:not(.DayPicker-Day--outside) {
+    background: #3e3b47;
+    border-radius: 10px;
+    color: #fff;
+  }
+
+  .DayPicker:not(.DayPicker--interactionDisabled)
+    .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
+    background: ${shade(0.2, '#3e3b47')};
+  }
+
+  .DayPicker-Day--today {
+    font-weight: normal;
+  }
+
+  .DayPicker-Day--disabled {
+    color: #666360 !important;
+    background: transparent !important;
+  }
+
+  .DayPicker-Day--selected {
+    background: #ff9000 !important;
+    border-radius: 10px;
+    color: #232129 !important;
+  }
+
+  .DayPickerInput-OverlayWrapper {
+    top: 30px;
+    right: 305px;
+  }
+
+  .DayPickerInput {
+    background: ${colors.colorInputBackground};
+    border-radius: 10px;
+    border: 1px solid ${colors.colorLineInWhite};
+    margin-top: 45px;
+    margin-left: 45px;
+    padding: 16px;
+    width: 85%;
+    color: #666360;
+
+    display: flex;
+    align-items: center;
+
+    input {
+      flex: 1;
+      border: 0;
+      font-size: 1.15rem;
+      color: ${colors.colorPrimary};
+      transition: background-color 5000s ease-in-out 0s;
+      background: transparent;
+      -webkit-text-fill-color: ${colors.colorTextcomplement};
+
+      &::placeholder {
+        color: ${colors.colorTextInPrimary};
+      }
+    }
+
+    svg {
+      margin-right: 16px;
+    }
+  }
+`;
+
+export const Error = styled(Tooltip)`
+  height: 20px;
+  margin-left: 16px;
+
+  svg {
+    margin: 0;
+  }
+
+  span {
+    background: ${colors.fourth};
+    color: ${colors.sixth};
+    &::before {
+      border-color: ${colors.fourth} transparent;
+    }
   }
 `;

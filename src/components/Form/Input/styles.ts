@@ -31,10 +31,7 @@ export const Container = styled.div<ContainerProps>`
   background: ${colors.colorInputBackground};
   border-radius: 10px;
   border: 1px solid ${colors.colorLineInWhite};
-  padding: 12.8px;
-  width: 100%;
 
-  border-radius: 10px;
   padding: 16px;
   width: 100%;
   color: #666360;
