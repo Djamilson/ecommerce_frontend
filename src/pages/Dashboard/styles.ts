@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
-export const Container = styled.div``;
+export const Container = styled.div`
+  margin: 0 3rem;
+`;
 
 export const ProductList = styled.ul`
   margin-top: 30px;

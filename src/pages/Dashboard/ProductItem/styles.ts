@@ -6,22 +6,22 @@ export const Container = styled.li`
   flex-direction: column;
   background: #fff;
   border-radius: 4px;
-  padding: 20px;
+  padding: 10px;
 
   img {
     align-self: center;
-    max-width: 250px;
+    max-width: 230px;
   }
 
   > strong {
-    font-size: 16px;
+    font-size: 15px;
     line-height: 20px;
     color: #333;
     margin-top: 5px;
   }
 
   > span {
-    font-size: 21px;
+    font-size: 20px;
     font-weight: bold;
     margin: 5px 0 20px;
     color: #333;
