@@ -14,6 +14,8 @@ export const SelectBlock = styled.div`
   label {
     font-size: 0.9rem;
     color: ${colors.colorTextcomplement};
+    font-weight: bold;
+    margin-bottom: 0.2rem;
   }
 
   select {

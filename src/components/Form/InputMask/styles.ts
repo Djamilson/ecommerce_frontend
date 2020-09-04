@@ -10,22 +10,24 @@ interface ContainerProps {
 }
 
 export const InputBlock = styled.div`
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  flex-direction: column;
-  margin: 0 10px 0px 10px;
+         position: relative;
+         display: flex;
+         align-items: flex-start;
+         justify-content: center;
+         flex-direction: column;
+         margin: 0 10px 0px 10px;
 
-  && {
-    margin-top: 1.4rem;
-  }
+         && {
+           margin-top: 1.4rem;
+         }
 
-  label {
-    font-size: 0.9rem;
-    color: ${colors.colorTextcomplement};
-  }
-`;
+         label {
+           font-size: 0.9rem;
+           color: ${colors.colorTextcomplement};
+           font-weight: bold;
+           margin-bottom: 0.2rem;
+         }
+       `;
 
 export const Container = styled.div<ContainerProps>`
   background: ${colors.colorInputBackground};
