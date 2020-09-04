@@ -43,17 +43,21 @@ import {
   PhoneItem,
   PhoneTable,
   AddressItem,
-  Calendar,
 } from './styles';
-
-import 'react-day-picker/lib/style.css';
 
 type OptionType = { label: string; value: number };
 
 interface SignUpFormData {
   name: string;
-  email: string;
   birdthDate: Date;
+  cpf: string;
+  rg: string;
+  number: string;
+  street: string;
+  complement?: string;
+  neighborhood: string;
+  zip_code: string;
+  city: string;
 }
 
 interface UF {
@@ -94,7 +98,7 @@ const AddressForm: React.FC = () => {
     async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
-        const today = new Date();
+
         addLoading({
           loading: true,
           description: 'Aguarde ...',
