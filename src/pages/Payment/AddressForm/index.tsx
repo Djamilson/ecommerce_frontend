@@ -14,10 +14,10 @@ import { Scope } from '@unform/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import {
-  format,
   isValid,
   isDate,
   isAfter,
+  format,
   parse,
   differenceInCalendarYears,
 } from 'date-fns';
@@ -94,6 +94,35 @@ const AddressForm: React.FC = () => {
 
   const [phoneItems, setPhoneItems] = useState<Phone[]>([]);
 
+  const addNewPhoneItem = useCallback(() => {
+    const prefix = formRef.current?.getFieldValue('phone.prefix');
+    const newNumber = formRef.current?.getFieldValue('phone.number');
+
+    if (prefix === '' || newNumber === '') {
+      addToast({
+        type: 'error',
+        title: 'Atenção!',
+        description:
+          'Você deve adicionar pelo o menos um fone, tente novamente!',
+      });
+      return;
+    }
+
+    const index = { prefix, number: newNumber };
+
+    setPhoneItems([
+      ...phoneItems.filter(
+        (phone: Phone) =>
+          phone.prefix !== index.prefix && phone.number !== index.number,
+      ),
+      index,
+    ]);
+
+    // Set single field value
+    formRef.current?.setFieldValue('phone.prefix', '');
+    formRef.current?.setFieldValue('phone.number', '');
+  }, [phoneItems, addToast]);
+
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
       try {
@@ -107,54 +136,71 @@ const AddressForm: React.FC = () => {
         const schema = Yup.object().shape({
           cpf: Yup.string().required('CPF obrigatório'),
           rg: Yup.string().required('RG obrigatório'),
+          rgss: Yup.string().required('Órgão de expedição obrigatório'),
           number: Yup.string().required('Número obrigatório'),
           street: Yup.string().required('Quadra/Rua obrigatório'),
           complement: Yup.string(),
           neighborhood: Yup.string().required('Bairro obrigatório'),
           zip_code: Yup.string().required('CEP obrigatório'),
-          city: Yup.string().required('City obrigatório'),
+          /* city: Yup.string().required('Cidade obrigatório'), */
         });
 
         await schema.validate(data, {
           abortEarly: false,
         });
 
-        if (phoneItems.length < 1) {
+        const prefix = formRef.current?.getFieldValue('phone.prefix');
+        const newNumber = formRef.current?.getFieldValue('phone.number');
+
+        if (phoneItems.length < 1 && (prefix === '' || newNumber === '')) {
           addToast({
-            type: 'success',
-            title: 'Cadastro realizado com sucesso!',
-            description: 'Você já pode fazer seu logon no Gobarber!',
+            type: 'error',
+            title: 'Atenção!',
+            description:
+              'Você deve adicionar pelo o menos um fone, tente novamente!',
           });
           return;
         }
+        addNewPhoneItem();
 
-        console.log('Meus dados:', data);
-        // await api.post('/users', data);
+        console.log('Meus dados: para salvar', data);
+        console.log('Minha city:', selectedCity);
+
+        const newData = { ...data, city_id: selectedCity, phoneItems };
+
+        console.log('Meus dados: para salvar', newData);
+        await api.put('/infoclients', newData);
         // history.push('/');
 
         addToast({
           type: 'success',
-          title: 'Cadastro realizado com sucesso!',
-          description: 'Você já pode fazer seu logon no Gobarber!',
+          title: 'Informações cadastrada!',
+          description: 'Dados inseridos com sucesso!',
         });
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErros(err);
           formRef.current?.setErrors(errors);
-          return;
         }
 
         addToast({
           type: 'error',
           title: 'Falha no cadastro!',
           description:
-            'Ocorreu uma falha ao tentar fazer o cagastro, tente novamente!',
+            'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente!',
         });
       } finally {
         removeLoading();
       }
     },
-    [addToast, addLoading, removeLoading, history],
+    [
+      addToast,
+      selectedCity,
+      phoneItems,
+      addNewPhoneItem,
+      addLoading,
+      removeLoading,
+    ],
   );
 
   async function loadStates() {
@@ -200,31 +246,13 @@ const AddressForm: React.FC = () => {
 
   function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
     const city = event.target.value;
-
+    // console.log('City:', city);
+    // formRef.current?.setFieldValue('city', event.target.value);
     setSelectedCity(city);
   }
 
   useEffect(() => {
     console.log('==', phoneItems);
-  }, [phoneItems]);
-
-  const addNewPhoneItem = useCallback(() => {
-    const prefix = formRef.current?.getFieldValue('phone.prefix');
-    const newNumber = formRef.current?.getFieldValue('phone.number');
-
-    const index = { prefix, number: newNumber };
-
-    setPhoneItems([
-      ...phoneItems.filter(
-        (phone: Phone) =>
-          phone.prefix !== index.prefix && phone.number !== index.number,
-      ),
-      index,
-    ]);
-
-    // Set single field value
-    formRef.current?.setFieldValue('phone.prefix', '');
-    formRef.current?.setFieldValue('phone.number', '');
   }, [phoneItems]);
 
   const removeItem = useCallback(
@@ -351,7 +379,7 @@ const AddressForm: React.FC = () => {
                 />
                 <InputMask
                   id="idZipCode"
-                  mask="999999"
+                  mask="99.999-999"
                   placeholder="CEP"
                   name="zip_code"
                   icon={FiLock}

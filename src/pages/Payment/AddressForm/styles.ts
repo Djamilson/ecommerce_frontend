@@ -57,7 +57,7 @@ export const ContainerForm = styled.div`
         background: ${colors.colorSecundary};
         color: ${colors.colorButtonText};
         border: 0;
-        border-radius: 0.6rem;
+        border-radius: 0.4rem;
 
         font: 700 1rem Archivo;
         display: flex;
@@ -130,7 +130,7 @@ export const ContainerForm = styled.div`
           background: ${colors.colorSecundary};
           color: ${colors.colorButtonText};
           border: 0;
-          border-radius: 0.6rem;
+          border-radius: 0.4rem;
 
           font: 700 1.1rem Archivo;
           display: flex;
