@@ -7,7 +7,7 @@ interface ContainerProps {
 export const Container = styled.div<ContainerProps>`
   position: absolute;
   right: 0%;
-  top: 40%;
+  top: 30vw;
   padding: 0;
   overflow: hidden;
 
