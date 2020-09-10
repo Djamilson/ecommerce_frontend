@@ -17,11 +17,10 @@ import {
   isValid,
   isDate,
   isAfter,
-  format,
   parse,
   differenceInCalendarYears,
 } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
+
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
@@ -247,19 +246,12 @@ const AddressForm: React.FC = () => {
     listCities();
   }, [selectedUf]);
 
-  const [limit] = useState(2);
-  const [page] = useState(1);
-
   function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
     const city = event.target.value;
     // console.log('City:', city);
     // formRef.current?.setFieldValue('city', event.target.value);
     setSelectedCity(city);
   }
-
-  useEffect(() => {
-    console.log('==', phoneItems);
-  }, [phoneItems]);
 
   const removeItem = useCallback(
     (index: Phone) => {
