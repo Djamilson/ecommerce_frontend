@@ -69,7 +69,7 @@ const Cart: React.FC = () => {
 
   const handlePayment = useCallback(() => {
     history.push('/payment');
-  }, []);
+  }, [history]);
 
   return (
     <Container>

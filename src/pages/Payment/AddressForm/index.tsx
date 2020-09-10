@@ -166,11 +166,16 @@ const AddressForm: React.FC = () => {
         console.log('Meus dados: para salvar', data);
         console.log('Minha city:', selectedCity);
 
-        const newData = { ...data, city_id: selectedCity, phoneItems };
+        const newData = {
+          ...data,
+          number: data.number.replace(/([^\d])+/gim, ''),
+          city_id: selectedCity,
+          phones: phoneItems,
+        };
 
         console.log('Meus dados: para salvar', newData);
         await api.put('/infoclients', newData);
-        // history.push('/');
+        history.push('/');
 
         addToast({
           type: 'success',
@@ -200,6 +205,7 @@ const AddressForm: React.FC = () => {
       addNewPhoneItem,
       addLoading,
       removeLoading,
+      history,
     ],
   );
 

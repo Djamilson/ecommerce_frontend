@@ -19,6 +19,12 @@ const SubHeader: React.FC<IHeaderProps> = ({ openModal }) => (
         </span>
         <strong>Cadastrar novo endereço</strong>
       </Link>
+      <Link to="/cartlogado">
+        <span>
+          <FiPlusCircle />
+        </span>
+        <strong>Finalizar comprar</strong>
+      </Link>
     </header>
   </Container>
 );

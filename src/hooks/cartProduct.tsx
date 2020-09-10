@@ -32,88 +32,97 @@ const CartProduct: React.FC = ({ children }) => {
     return [] as ProductStock[];
   });
 
-  const updateSuccess = useCallback(async (id, stock) => {
-    const newCart = cart;
+  const updateSuccess = useCallback(
+    async (id, stock) => {
+      const newCart = cart;
 
-    const productIndex = newCart.findIndex(
-      (p) => p.itemProduct.product.id === id,
-    );
+      const productIndex = newCart.findIndex(
+        (p) => p.itemProduct.product.id === id,
+      );
 
-    if (productIndex >= 0) {
-      newCart[productIndex].itemProduct.stock = Number(stock);
+      if (productIndex >= 0) {
+        newCart[productIndex].itemProduct.stock = Number(stock);
 
-      setCart([...newCart]);
-      localStorage.setItem('@list:product', JSON.stringify(newCart));
-    }
-  }, []);
+        setCart([...newCart]);
+        localStorage.setItem('@list:product', JSON.stringify(newCart));
+      }
+    },
+    [cart],
+  );
 
-  const updateAmount = useCallback(async (id, stock) => {
-    if (stock <= 0) return;
+  const updateAmount = useCallback(
+    async (id, stock) => {
+      if (stock <= 0) return;
 
-    const searchStock = await api.get(`/products/${id}`);
-    const stockAmount = searchStock.data.stock;
+      const searchStock = await api.get(`/products/${id}`);
+      const stockAmount = searchStock.data.stock;
 
-    if (stock > stockAmount) {
-      console.log('Erro: não tem mais produtos');
+      if (stock > stockAmount) {
+        console.log('Erro: não tem mais produtos');
 
-      addToast({
-        type: 'error',
-        title: 'Falha!',
-        description: 'Não temos mais produto para adicionar!',
-      });
-      return;
-    }
+        addToast({
+          type: 'error',
+          title: 'Falha!',
+          description: 'Não temos mais produto para adicionar!',
+        });
+        return;
+      }
 
-    updateSuccess(id, stock);
-  }, []);
+      updateSuccess(id, stock);
+    },
+    [addToast, updateSuccess],
+  );
 
-  const addToCart = useCallback(async (id) => {
-    const newCart = cart;
+  const addToCart = useCallback(
+    async (id) => {
+      const newCart = cart;
 
-    const productExists = newCart.find(
-      (p: ProductStock) => p.itemProduct.product.id === id,
-    );
+      const productExists = newCart.find(
+        (p: ProductStock) => p.itemProduct.product.id === id,
+      );
 
-    const stock = await api.get(`/products/${id}`);
+      const stock = await api.get(`/products/${id}`);
 
-    const stockAmount = stock.data.stock;
-    const currentAmount = productExists ? productExists.itemProduct.stock : 0;
+      const stockAmount = stock.data.stock;
+      const currentAmount = productExists ? productExists.itemProduct.stock : 0;
 
-    const amount = currentAmount + 1;
+      const amount = currentAmount + 1;
 
-    if (amount > stockAmount) {
-      console.log('Erro: não tem mais produtos');
+      if (amount > stockAmount) {
+        console.log('Erro: não tem mais produtos');
 
-      addToast({
-        type: 'error',
-        title: 'Falha!',
-        description: 'Não temos mais produto para adicionar!',
-      });
+        addToast({
+          type: 'error',
+          title: 'Falha!',
+          description: 'Não temos mais produto para adicionar!',
+        });
 
-      return;
-    }
+        return;
+      }
 
-    if (productExists) {
-      updateSuccess(id, amount);
-    } else {
-      const res = await api.get(`/products/${id}`);
+      if (productExists) {
+        updateSuccess(id, amount);
+      } else {
+        const res = await api.get(`/products/${id}`);
 
-      const { data } = res;
+        const { data } = res;
 
-      const item = { stock: 1, product: data };
+        const item = { stock: 1, product: data };
 
-      newCart.push({
-        itemProduct: {
-          ...item,
-          stock: 1,
-        },
-      });
+        newCart.push({
+          itemProduct: {
+            ...item,
+            stock: 1,
+          },
+        });
 
-      localStorage.setItem('@list:product', JSON.stringify(newCart));
+        localStorage.setItem('@list:product', JSON.stringify(newCart));
 
-      setCart([...newCart]);
-    }
-  }, []);
+        setCart([...newCart]);
+      }
+    },
+    [cart],
+  );
 
   const removeProduct = useCallback(async (id) => {
     const removeCart = cart;

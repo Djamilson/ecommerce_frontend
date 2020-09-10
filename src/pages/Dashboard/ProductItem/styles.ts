@@ -6,7 +6,7 @@ export const Container = styled.li`
   flex-direction: column;
   background: #fff;
   border-radius: 4px;
-  padding: 10px;
+  padding: 1rem;
 
   img {
     align-self: center;
@@ -21,7 +21,7 @@ export const Container = styled.li`
   }
 
   > span {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     margin: 5px 0 20px;
     color: #333;
@@ -55,6 +55,7 @@ export const Container = styled.li`
     }
 
     span {
+      font-size: 11px;
       flex: 1;
       text-align: center;
       font-weight: bold;
