@@ -3,13 +3,13 @@ import Cards from 'react-credit-cards';
 import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
-import pagarme from 'pagarme';
-
 import { Scope } from '@unform/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+import pagarme from 'pagarme';
 import * as Yup from 'yup';
 
+import api from '../../../_services/api';
 import Input from '../../../components/Form/Input';
 import InputMask from '../../../components/Form/InputMask';
 import Header from '../../../components/Headers/Header';
@@ -52,35 +52,81 @@ const Card: React.FC = () => {
     id: '',
   });
 
-  const handleSubmit = useCallback(
-    async (data: SignUpFormData) => {
-      try {
-        formRef.current?.setErrors({});
-        /*
+  const handleSubmit = useCallback(async (data: SignUpFormData) => {
+    try {
+      formRef.current?.setErrors({});
+      /*
        addLoading({
          loading: true,
          description: 'Aguarde ...',
        });
 */
-        const schema = Yup.object().shape({
-          name: Yup.string().required('Nome obrigatório'),
+      const schema = Yup.object().shape({
+        card_holder_name: Yup.string().required('Nome obrigatório'),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      console.log('Meus dados: para salvar', data);
+
+      let cardData;
+
+      /* const client = await pagarme.client
+        .connect({
+          encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
+        })
+        .then((client_retur: any) => {
+          return client_retur.security.encrypt(data);
+        })
+        .then((card_hash) => console.log(card_hash)); */
+
+      const client_retur = await pagarme.client
+        .connect({
+          encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
+        })
+        .then((client_: any) => {
+          return client_;
         });
 
-        await schema.validate(data, {
-          abortEarly: false,
-        });
+      const card_hash = await client_retur.security.encrypt(data);
 
-        console.log('Meus dados: para salvar', data);
-        // await api.put('/infoclients', newData);
-        // history.push('/');
+      const amount = 222;
+      const items = [
+        {
+          id: 'e020d56f-d52d-419f-b6e8-e0856b0b4ad9',
+          title: 'Book',
+          description: 'Rocket',
+          quantity: 2,
+          unit_price: 12500,
+        },
+        {
+          id: '7d89c145-6d56-4c21-9c10-58e2efb7cead',
+          title: 'Mug',
+          description: 'Rocket',
+          quantity: 1,
+          unit_price: 2500,
+        },
+      ];
 
+      console.log('Aqui vai ::', card_hash);
+      await api.post('/checkouts', {
+        ...data,
+        card_hash,
+        installments,
+        items,
+        amount,
+      });
+      // history.push('/');
+      /*
         addToast({
           type: 'success',
           title: 'Informações cadastrada!',
           description: 'Dados inseridos com sucesso!',
-        });
-      } catch (err) {
-        if (err instanceof Yup.ValidationError) {
+        }); */
+    } catch (err) {
+      /* if (err instanceof Yup.ValidationError) {
           const errors = getValidationErros(err);
           formRef.current?.setErrors(errors);
         }
@@ -90,15 +136,11 @@ const Card: React.FC = () => {
           title: 'Falha no cadastro!',
           description:
             'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente!',
-        });
-      } finally {
-        removeLoading();
-      }
-    },
-    [addToast, addLoading, removeLoading, history],
-  );
-
-  
+        }); */
+    } finally {
+      // removeLoading();
+    }
+  }, []);
 
   const handleSelectCard = useCallback(async (data: ICard) => {
     /* setData({
