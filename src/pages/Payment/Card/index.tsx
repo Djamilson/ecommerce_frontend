@@ -13,6 +13,7 @@ import api from '../../../_services/api';
 import Input from '../../../components/Form/Input';
 import InputMask from '../../../components/Form/InputMask';
 import Header from '../../../components/Headers/Header';
+import { useCartProduct } from '../../../hooks/cartProduct';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
 import getValidationErros from '../../../utils/getValidationErros';
@@ -37,6 +38,7 @@ interface ICard {
 }
 
 const Card: React.FC = () => {
+  const { cart } = useCartProduct();
   const [installments, setInstallments] = useState(1);
 
   const formRef = useRef<FormHandles>(null);
@@ -52,28 +54,29 @@ const Card: React.FC = () => {
     id: '',
   });
 
-  const handleSubmit = useCallback(async (data: SignUpFormData) => {
-    try {
-      formRef.current?.setErrors({});
-      /*
+  const handleSubmit = useCallback(
+    async (data: SignUpFormData) => {
+      try {
+        formRef.current?.setErrors({});
+        /*
        addLoading({
          loading: true,
          description: 'Aguarde ...',
        });
 */
-      const schema = Yup.object().shape({
-        card_holder_name: Yup.string().required('Nome obrigatório'),
-      });
+        const schema = Yup.object().shape({
+          card_holder_name: Yup.string().required('Nome obrigatório'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
+        await schema.validate(data, {
+          abortEarly: false,
+        });
 
-      console.log('Meus dados: para salvar', data);
+        console.log('Meus dados: para salvar', data);
 
-      let cardData;
+        let cardData;
 
-      /* const client = await pagarme.client
+        /* const client = await pagarme.client
         .connect({
           encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
         })
@@ -82,51 +85,38 @@ const Card: React.FC = () => {
         })
         .then((card_hash) => console.log(card_hash)); */
 
-      const client_retur = await pagarme.client
-        .connect({
-          encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
-        })
-        .then((client_: any) => {
-          return client_;
+        const client_retur = await pagarme.client
+          .connect({
+            encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
+          })
+          .then((client_: any) => {
+            return client_;
+          });
+
+        const card_hash = await client_retur.security.encrypt(data);
+
+        const amount = 222;
+        const fee = 234.23;
+
+        console.log('Aqui vai ::', card_hash);
+        await api.post('/orders', {
+          ...data,
+          card_hash,
+          fee,
+          installments,
+          products: cart,
+          amount,
         });
-
-      const card_hash = await client_retur.security.encrypt(data);
-
-      const amount = 222;
-      const items = [
-        {
-          id: 'e020d56f-d52d-419f-b6e8-e0856b0b4ad9',
-          title: 'Book',
-          description: 'Rocket',
-          quantity: 2,
-          unit_price: 12500,
-        },
-        {
-          id: '7d89c145-6d56-4c21-9c10-58e2efb7cead',
-          title: 'Mug',
-          description: 'Rocket',
-          quantity: 1,
-          unit_price: 2500,
-        },
-      ];
-
-      console.log('Aqui vai ::', card_hash);
-      await api.post('/checkouts', {
-        ...data,
-        card_hash,
-        installments,
-        items,
-        amount,
-      });
-      // history.push('/');
-      /*
+        // history.push('/');
+        /*
         addToast({
           type: 'success',
           title: 'Informações cadastrada!',
           description: 'Dados inseridos com sucesso!',
         }); */
-    } catch (err) {
-      /* if (err instanceof Yup.ValidationError) {
+      } catch (err) {
+        console.log('Error: ', err);
+        /* if (err instanceof Yup.ValidationError) {
           const errors = getValidationErros(err);
           formRef.current?.setErrors(errors);
         }
@@ -137,10 +127,12 @@ const Card: React.FC = () => {
           description:
             'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente!',
         }); */
-    } finally {
-      // removeLoading();
-    }
-  }, []);
+      } finally {
+        // removeLoading();
+      }
+    },
+    [pagarme, cart],
+  );
 
   const handleSelectCard = useCallback(async (data: ICard) => {
     /* setData({
