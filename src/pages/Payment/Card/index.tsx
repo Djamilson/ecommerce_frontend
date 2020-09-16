@@ -58,12 +58,12 @@ const Card: React.FC = () => {
     async (data: SignUpFormData) => {
       try {
         formRef.current?.setErrors({});
-        /*
-       addLoading({
-         loading: true,
-         description: 'Aguarde ...',
-       });
-*/
+
+        addLoading({
+          loading: true,
+          description: 'Aguarde ...',
+        });
+
         const schema = Yup.object().shape({
           card_holder_name: Yup.string().required('Nome obrigatório'),
         });
@@ -108,30 +108,31 @@ const Card: React.FC = () => {
           amount,
         });
         // history.push('/');
-        /*
+
         addToast({
           type: 'success',
           title: 'Informações cadastrada!',
-          description: 'Dados inseridos com sucesso!',
-        }); */
+          description:
+            'Compra efetuada com sucesso, aguarde alguns momento para aprovação!',
+        });
       } catch (err) {
-        console.log('Error: ', err);
-        /* if (err instanceof Yup.ValidationError) {
+        // console.log('Error: ', err);
+        if (err instanceof Yup.ValidationError) {
           const errors = getValidationErros(err);
           formRef.current?.setErrors(errors);
         }
 
         addToast({
           type: 'error',
-          title: 'Falha no cadastro!',
+          title: 'Falha na compra!',
           description:
-            'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente!',
-        }); */
+            'Ocorreu uma falha ao tentar finalizar a compra, tente novamente!',
+        });
       } finally {
-        // removeLoading();
+        removeLoading();
       }
     },
-    [pagarme, cart],
+    [pagarme, cart, addToast, removeLoading, addLoading],
   );
 
   const handleSelectCard = useCallback(async (data: ICard) => {
