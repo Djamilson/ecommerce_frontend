@@ -1,9 +1,14 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  ChangeEvent,
+  useEffect,
+} from 'react';
 import Cards from 'react-credit-cards';
-import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
+import { FiLock } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
-import { Scope } from '@unform/core';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import pagarme from 'pagarme';
@@ -12,6 +17,7 @@ import * as Yup from 'yup';
 import api from '../../../_services/api';
 import Input from '../../../components/Form/Input';
 import InputMask from '../../../components/Form/InputMask';
+import Select from '../../../components/Form/Select';
 import Header from '../../../components/Headers/Header';
 import { useCartProduct } from '../../../hooks/cartProduct';
 import { useLoading } from '../../../hooks/loading';
@@ -23,7 +29,6 @@ import {
   PaymentTitle,
   Payment,
   CheckoutButton,
-  Loading,
 } from './styles';
 
 interface SignUpFormData {
@@ -135,8 +140,9 @@ const Card: React.FC = () => {
     [pagarme, cart, addToast, removeLoading, addLoading],
   );
 
-  const handleSelectCard = useCallback(async (data: ICard) => {
-    /* setData({
+  const handleSelectCard = useCallback(
+    async (data: ICard) => {
+      /* setData({
       ...data,
       card: {
         card_holder_name: holder_name,
@@ -145,25 +151,38 @@ const Card: React.FC = () => {
         card_cvv: '',
       },
     }); */
-    setCard({
-      holder_name: data.holder_name,
-      number: data.number,
-      expiration_date: data.expiration_date,
-      cvv: '',
-      id: data.id,
-    });
+      console.log('Passou:: ', data);
+      setCard({
+        holder_name: data.holder_name,
+        number: data.number,
+        expiration_date: data.expiration_date,
+        cvv: '',
+        id: data.id,
+      });
+    },
+    [setCard],
+  );
+
+  const [renderInstallments, setRenderInstallments] = useState([
+    { label: '', value: '' },
+  ]);
+  useEffect(() => {
+    setRenderInstallments(
+      [...new Array(4)].map((item, idx) => {
+        const installment = idx + 1;
+        return {
+          label: `${installment} x ${1100 / installment}`,
+          value: `${installment}`,
+        };
+      }),
+    );
   }, []);
 
-  const renderInstallments = useCallback(async () => {
-    return [...new Array(4)].map((item, idx) => {
-      const installment = idx + 1;
-      return (
-        <option value={installment}>
-          {`${installment} x ${1100 / installment}`}
-        </option>
-      );
-    });
-  }, []);
+  function handleSelectInstallments(event: ChangeEvent<HTMLSelectElement>) {
+    const { value } = event.target;
+    console.log('Selecionou o numero de parcelas ', value);
+    setInstallments(Number(value));
+  }
 
   return (
     <Container>
@@ -172,12 +191,20 @@ const Card: React.FC = () => {
         <Form ref={formRef} onSubmit={handleSubmit}>
           <PaymentTitle>Dados bancários</PaymentTitle>
           <Payment>
+            <Select
+              name="installment"
+              label="Número de parcelas"
+              id="uf"
+              onChange={handleSelectInstallments}
+              options={renderInstallments}
+            />
             <div className="form-area">
               <Input
                 placeholder="Nome como está no cartão"
                 icon={FiLock}
                 name="card_holder_name"
                 label="Nome no cartão"
+                onChange={(e) => handleSelectCard}
               />
 
               <Input
