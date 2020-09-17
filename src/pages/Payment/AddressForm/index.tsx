@@ -20,7 +20,6 @@ import {
   parse,
   differenceInCalendarYears,
 } from 'date-fns';
-
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
@@ -79,11 +78,6 @@ const AddressForm: React.FC = () => {
   const { addToast } = useToast();
   const history = useHistory();
   const { addLoading, removeLoading } = useLoading();
-
-  const INITIAL_CITY = {
-    value: 0,
-    label: 'Selecione a cidade',
-  };
 
   const [selectedUf, setSelectedUf] = useState<string>('0');
   const [selectedCity, setSelectedCity] = useState<string>('0');
