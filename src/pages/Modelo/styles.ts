@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-radius: 4px;
-  padding: 20px;
+  margin: 0 3rem;
+  margin-top: 1rem;
 `;

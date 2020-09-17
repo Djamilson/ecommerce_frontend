@@ -1743,6 +1743,13 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
+"@types/react-credit-cards@^0.8.0":
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/@types/react-credit-cards/-/react-credit-cards-0.8.0.tgz#f09cc54ffe60715aedae25a79bd56d2f13cdad8d"
+  integrity sha512-PqDipPUMDf8LEqjsoFAxPNrkk9xIEoKL/qCWmvdldgsjMVS2uQjbkyv9cEavdumxsSswP5Uo5Mb1OxyeV5udjQ==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-dom@*", "@types/react-dom@^16.9.0":
   version "16.9.8"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.8.tgz#fe4c1e11dfc67155733dfa6aa65108b4971cb423"
@@ -8499,6 +8506,16 @@ package-json@^6.3.0:
     registry-url "^5.0.0"
     semver "^6.2.0"
 
+pagarme-js-types@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/pagarme-js-types/-/pagarme-js-types-2.1.1.tgz#0848abc53e1facf2ffb9afe49054d61d4c766bb3"
+  integrity sha512-Z4ybdM6HIrMUYaXT9DWe8sz2P4DRg5K4xnklUVJs8q7+QlZ3IndrYx6TfI1wmSwttbkn6C5aaNwHOtAacTLQjQ==
+
+pagarme@^4.13.0:
+  version "4.13.0"
+  resolved "https://registry.yarnpkg.com/pagarme/-/pagarme-4.13.0.tgz#f15cd9186f5df6072acc82ce12834e7fef2f5b0e"
+  integrity sha512-5fOQTyw8pCbJvbqXdjlakKs2IU70vghcyalXZHMFSyO2vPJtzKpWbYnXC5EzAvF/zfNhRhuIIOGZZR4FAO4Vqw==
+
 pako@~1.0.5:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
@@ -8675,6 +8692,13 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+payment@^2.3.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/payment/-/payment-2.4.0.tgz#e9d81de364fa919633bae71829808ac1236da9f8"
+  integrity sha512-FjVkqu1GW0epmWRuA7853cfEdjZx61z1vKagcvfvKWeXwEuUlOKr2nkdrCjue5qJWNSzj235pidaK3GsCbY84A==
+  dependencies:
+    qj "~2.0.0"
 
 pbkdf2@^3.0.3:
   version "3.0.17"
@@ -9673,6 +9697,11 @@ q@^1.1.2:
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
+qj@~2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/qj/-/qj-2.0.0.tgz#054dd3b75ce018728d23a0605f030dfda0bd158a"
+  integrity sha1-BU3Tt1zgGHKNI6BgXwMN/aC9FYo=
+
 qs@6.7.0:
   version "6.7.0"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.7.0.tgz#41dc1a015e3d581f1621776be31afb2876a9b1bc"
@@ -9773,6 +9802,13 @@ react-app-polyfill@^1.0.6:
     raf "^3.4.1"
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
+
+react-credit-cards@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/react-credit-cards/-/react-credit-cards-0.8.3.tgz#608a8ee8bf3a88857fc83023ffba1ad536ba8c7e"
+  integrity sha512-88XJErkkdDjeFevOxfWYV2dUs4ddNNXJMIgutqTlUH2pYfcaDeFv9MXNGCcJKvBv4+6GEnxbCToymNRNbEt/uw==
+  dependencies:
+    payment "^2.3.0"
 
 react-day-picker@^7.4.8:
   version "7.4.8"

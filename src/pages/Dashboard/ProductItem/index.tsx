@@ -30,9 +30,6 @@ const ProductItem: React.FC<ProductStock> = (itemProduct: ProductStock) => {
   const amount = useMemo(
     () =>
       cart.reduce((sumAmount: any, item: ProductStock) => {
-        console.log('==>>', cart);
-        console.log('==>>', item);
-
         sumAmount[item.itemProduct.product.id] = item.itemProduct.stock;
 
         return sumAmount;

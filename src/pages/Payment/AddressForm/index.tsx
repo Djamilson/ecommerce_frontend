@@ -17,11 +17,9 @@ import {
   isValid,
   isDate,
   isAfter,
-  format,
   parse,
   differenceInCalendarYears,
 } from 'date-fns';
-import ptBR from 'date-fns/locale/pt-BR';
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
@@ -80,11 +78,6 @@ const AddressForm: React.FC = () => {
   const { addToast } = useToast();
   const history = useHistory();
   const { addLoading, removeLoading } = useLoading();
-
-  const INITIAL_CITY = {
-    value: 0,
-    label: 'Selecione a cidade',
-  };
 
   const [selectedUf, setSelectedUf] = useState<string>('0');
   const [selectedCity, setSelectedCity] = useState<string>('0');
@@ -166,11 +159,16 @@ const AddressForm: React.FC = () => {
         console.log('Meus dados: para salvar', data);
         console.log('Minha city:', selectedCity);
 
-        const newData = { ...data, city_id: selectedCity, phoneItems };
+        const newData = {
+          ...data,
+          number: data.number.replace(/([^\d])+/gim, ''),
+          city_id: selectedCity,
+          phones: phoneItems,
+        };
 
         console.log('Meus dados: para salvar', newData);
         await api.put('/infoclients', newData);
-        // history.push('/');
+        history.push('/');
 
         addToast({
           type: 'success',
@@ -200,6 +198,7 @@ const AddressForm: React.FC = () => {
       addNewPhoneItem,
       addLoading,
       removeLoading,
+      history,
     ],
   );
 
@@ -241,19 +240,12 @@ const AddressForm: React.FC = () => {
     listCities();
   }, [selectedUf]);
 
-  const [limit] = useState(2);
-  const [page] = useState(1);
-
   function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
     const city = event.target.value;
     // console.log('City:', city);
     // formRef.current?.setFieldValue('city', event.target.value);
     setSelectedCity(city);
   }
-
-  useEffect(() => {
-    console.log('==', phoneItems);
-  }, [phoneItems]);
 
   const removeItem = useCallback(
     (index: Phone) => {
