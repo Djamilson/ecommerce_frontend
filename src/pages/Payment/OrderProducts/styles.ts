@@ -39,12 +39,22 @@ export const ProductTable = styled.table`
     padding: 12px;
   }
   tbody td {
-    padding: 12px;
+    padding: 5px;
     border-bottom: 1px solid #eee;
     color: #999;
   }
+  tbody > tr > :nth-child(3) {
+    text-align: center;
+  }
+  tbody > tr > :nth-child(4) {
+    text-align: center;
+  }
+  tbody > tr > :nth-child(5) {
+    text-align: center;
+  }
+
   img {
-    height: 100px;
+    height: 80px;
   }
   strong {
     color: #333;
@@ -56,22 +66,6 @@ export const ProductTable = styled.table`
     margin-top: 5px;
     font-size: 18px;
     font-weight: bold;
-  }
-  div {
-    display: flex;
-    align-items: center;
-    input {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      color: #666;
-      padding: 6px;
-      width: 50px;
-    }
-  }
-  button {
-    background: none;
-    border: 0;
-    padding: 6px;
   }
 `;
 
@@ -85,49 +79,66 @@ export const TransactionsTable = styled.table`
   tbody td {
     padding: 12px;
     border-bottom: 1px solid #eee;
+    color: #999;
   }
-  img {
-    height: 100px;
+  tbody > tr > :nth-child(6) {
+    text-align: center;
   }
-  strong {
-    color: #333;
-    display: block;
+  tbody > tr > :nth-child(4) {
+    text-align: center;
   }
-  span {
-    color: #333;
-    display: block;
-    margin-top: 5px;
-    font-size: 18px;
-    font-weight: bold;
+  tbody > tr > :nth-child(5) {
+    text-align: center;
   }
-  div {
-    display: flex;
-    align-items: center;
-    input {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      color: #666;
-      padding: 6px;
-      width: 50px;
-    }
+
+  thead > tr > :nth-child(4) {
+    text-align: center;
   }
-  button {
-    background: none;
-    border: 0;
-    padding: 6px;
+
+  thead > tr > :nth-child(5) {
+    text-align: center;
+  }
+  thead > tr > :nth-child(6) {
+    text-align: center;
   }
 `;
 
 export const Total = styled.div`
   display: flex;
-  align-items: baseline;
-  span {
-    color: #999;
-    font-weight: bold;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+
+  section {
+    flex: 1;
+    align-items: baseline;
+    flex-direction: row;
+    span {
+      color: #999;
+      font-weight: bold;
+    }
+    strong {
+      font-size: 18px;
+      margin-left: 5px;
+      color: #3b3a3a;
+
+      text-align: right;
+    }
   }
-  strong {
-    font-size: 28px;
-    margin-left: 5px;
-    color: #3b3a3a;
+
+  div {
+    display: flex;
+    align-items: baseline;
+    flex-direction: row;
+    span {
+      color: #999;
+      font-weight: bold;
+      padding-left: 10px;
+    }
+    strong {
+      font-size: 16px;
+      margin-left: 5px;
+      color: #3b3a3a;
+    }
   }
 `;
