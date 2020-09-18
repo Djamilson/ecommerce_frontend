@@ -43,22 +43,37 @@ interface OrderProducts {
 
 interface Order {
   id: string;
-  total: number;
-  fee: number;
+  total: string;
+  fee: string;
   created_at: Date;
-  order_products: OrderProducts[];
-  subtotal: number;
+  subtotal: string;
 }
 
 interface ParamTypes {
   order_id: string;
 }
+interface PropsTransaction {
+  id: string;
+  transaction_id: string;
+  order_id: string;
+  status: string;
+  authorization_code: string;
+  brand: string;
+  tid: string;
+  authorized_amount: string;
+  installments: number;
+  created_at: string;
+}
 
 const OrderProducts: React.FC = () => {
-  const { user } = useAuth();
-  const [order, setOrder] = useState({} as Order);
-
   const { order_id } = useParams<ParamTypes>();
+
+  const [order, setOrder] = useState<Order>({} as Order);
+  const [transaction, setTransaction] = useState<PropsTransaction>(
+    {} as PropsTransaction,
+  );
+
+  const [orderProducts, setOrderProducts] = useState<OrderProducts[]>([]);
 
   useEffect(() => {
     console.log('meu id: ', order_id);
@@ -67,35 +82,97 @@ const OrderProducts: React.FC = () => {
         const { data } = await api.get(`orders/${order_id}`);
         console.log(' busca::::>', data);
 
-        setOrder(data);
+        const t = {
+          id: String(data.id),
+          subtotal: formatPrice(Number(data.total)),
+          total: formatPrice(Number(data.total) + Number(data.fee)),
+          fee: formatPrice(Number(data.fee)),
+          created_at: new Date(
+            format(new Date(data.created_at), 'dd/MM/yyyy', {
+              locale: ptBR,
+            }),
+          ),
+        };
+
+        setOrder(t);
+
+        const formatProduct = data.order_products.map((item: OrderProducts) => {
+          return {
+            id: item.id,
+            product_id: item.product_id,
+            order_id: item.order_id,
+            quantity: item.quantity,
+            price: formatPrice(Number(item.price)),
+            product: {
+              ...item.product,
+              price: formatPrice(Number(item.product.price)),
+            },
+            subtotal: formatPrice(Number(item.subtotal)),
+          };
+        });
+
+        setOrderProducts(formatProduct);
       } catch (err) {
         console.log(err);
       } finally {
         console.log('Finalizou');
+        console.log('OrderProducts', orderProducts);
       }
     }
 
     load();
-  }, [user.id]);
+  }, [order_id]);
 
-  const renderItems = useMemo(
-    () =>
-      order.order_products.map((item: OrderProducts) => (
-        <tr key={item.id}>
-          <td>kkk</td>
-          <td>{item.price}</td>
-          <td>{item.quantity}</td>
-          <td>{item.subtotal}</td>
-          <td>
-            <button type="button" onClick={() => {}} disabled={false}>
-              Lista itens
-            </button>
-          </td>
-        </tr>
-      )),
+  useEffect(() => {
+    console.log('meu id da order: ', order_id);
+    async function loadTransaction() {
+      try {
+        const { data } = await api.get(`/transactions/orders/${order_id}`);
+        console.log('My transaction:', data);
+        setTransaction({
+          ...data,
+          authorized_amount: formatPrice(Number(data.authorized_amount)),
+          created_at: new Date(
+            format(new Date(data.created_at), 'dd/MM/yyyy', {
+              locale: ptBR,
+            }),
+          ),
+        });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        console.log('Finalizou');
+        console.log('OrderProducts', orderProducts);
+      }
+    }
 
-    [order],
-  );
+    loadTransaction();
+  }, [order_id]);
+
+  /*
+  const renderItems = useMemo(() => {
+    if (!order) {
+      console.log('==>>', order);
+    }
+    return (
+      order &&
+      order.order_products.map((item) => {
+        return (
+          <tr key={item.id}>
+            <td>kkk</td>
+            <td>kk</td>
+            <td>pp</td>
+            <td>ppp</td>
+            <td>
+              <button type="button" onClick={() => {}} disabled={false}>
+                Lista itens
+              </button>
+            </td>
+          </tr>
+        );
+      })
+    );
+  }, [order_id]); */
 
   return (
     <Container>
@@ -105,31 +182,61 @@ const OrderProducts: React.FC = () => {
         <ProductTable>
           <thead>
             <tr>
-              <th>Data compra</th>
-              <th>Frete</th>
-              <th>SubTotal</th>
-              <th>Total+SubTotal</th>
-              <th>Ação</th>
+              <th />
+              <th>Nome</th>
+              <th>Quantidade</th>
+              <th>Valor Unitário</th>
+              <th>Total</th>
             </tr>
           </thead>
-          <tbody>{renderItems}</tbody>
+          <tbody>
+            {!order
+              ? `${(
+                  <tr>
+                    <td colSpan={3}>Carregando...</td>
+                  </tr>
+                )}`
+              : orderProducts.map((item: OrderProducts) => {
+                  return (
+                    <tr key={item.id}>
+                      <td>
+                        <img src={item.product.image} alt={item.product.name} />
+                      </td>
+                      <td>
+                        <strong>{item.product.name}</strong>
+                        <span>{item.price}</span>
+                      </td>
+                      <td>{item.quantity}</td>
+                      <td>{item.price}</td>
+                      <td>{item.subtotal}</td>
+                    </tr>
+                  );
+                })}
+          </tbody>
         </ProductTable>
 
         <TransactionsTable>
           <thead>
             <tr>
               <th />
-              <th>band</th>
-              <th>N da autorização</th>
+              <th>Bandeira do cartão</th>
+              <th>Status</th>
               <th>N transação</th>
+              <th>N de parcelas</th>
               <th>Valor autorizado</th>
             </tr>
           </thead>
           <tbody>
-            <td />
-            <td>kkk</td>
-            <td>kk</td>
-            <td>nnnmm</td>
+            <tr>
+              <td />
+              <td>
+                <div>{transaction.brand}</div>
+              </td>
+              <td>{transaction.status}</td>
+              <td>{transaction.authorization_code}</td>
+              <td>{transaction.installments}</td>
+              <td>{transaction.authorized_amount}</td>
+            </tr>
           </tbody>
         </TransactionsTable>
 
@@ -139,8 +246,21 @@ const OrderProducts: React.FC = () => {
           </button>
 
           <Total>
-            <span>TOTAL</span>
-            <strong>R$ 456,50</strong>
+            <div>
+              <div>
+                <span>Frete</span>
+                <strong>{order.fee}</strong>
+              </div>
+              <div>
+                <span>SubTotal</span>
+                <strong>{order.subtotal}</strong>
+              </div>
+            </div>
+
+            <section>
+              <span>TOTAL</span>
+              <strong>{order.total}</strong>
+            </section>
           </Total>
         </footer>
       </Content>
