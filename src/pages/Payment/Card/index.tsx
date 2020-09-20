@@ -4,9 +4,10 @@ import React, {
   useCallback,
   ChangeEvent,
   useEffect,
+  useMemo,
 } from 'react';
 import Cards from 'react-credit-cards';
-import { FiLock } from 'react-icons/fi';
+import { FiPlusCircle, FiCheck, FiLock } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 
 import { FormHandles } from '@unform/core';
@@ -15,24 +16,42 @@ import pagarme from 'pagarme';
 import * as Yup from 'yup';
 
 import api from '../../../_services/api';
+import warningIcon from '../../../assets/images/icons/warning.svg';
 import Input from '../../../components/Form/Input';
 import InputMask from '../../../components/Form/InputMask';
-import Select from '../../../components/Form/Select';
 import Header from '../../../components/Headers/Header';
 import { useCartProduct } from '../../../hooks/cartProduct';
 import { useLoading } from '../../../hooks/loading';
 import { useToast } from '../../../hooks/toast';
+import { formatPrice } from '../../../utils/format';
 import getValidationErros from '../../../utils/getValidationErros';
-import {
+import Select from './Select';
+/* import {
   Container,
+  ContainerForm,
   Content,
   PaymentTitle,
   Payment,
   CheckoutButton,
+  ScheduleItem,
+  AddressItem,
+} from './styles'; */
+
+import {
+  Container,
+  Box,
+  Content,
+  AnimationContainer,
+  Background,
+  CardItem,
+  ScheduleItem,
+  InstallmentItem,
+  CardFee,
 } from './styles';
 
 interface SignUpFormData {
   name: string;
+  card_number: string;
 }
 
 interface ICard {
@@ -42,8 +61,13 @@ interface ICard {
   expiration_date: string;
 }
 
+interface IFee {
+  sedex: string;
+  pac: string;
+}
+
 const Card: React.FC = () => {
-  const { cart } = useCartProduct();
+  const { cart, clearCart } = useCartProduct();
   const [installments, setInstallments] = useState(1);
 
   const formRef = useRef<FormHandles>(null);
@@ -58,6 +82,16 @@ const Card: React.FC = () => {
     cvv: '',
     id: '',
   });
+
+  const totalProducts = useMemo(
+    () =>
+      cart.reduce((totalsum, item) => {
+        return (
+          totalsum + item.itemProduct.product.price * item.itemProduct.stock
+        );
+      }, 0),
+    [cart],
+  );
 
   const handleSubmit = useCallback(
     async (data: SignUpFormData) => {
@@ -81,14 +115,8 @@ const Card: React.FC = () => {
 
         let cardData;
 
-        /* const client = await pagarme.client
-        .connect({
-          encryption_key: process.env.REACT_APP_PAGARME_ENCRYPTION_KEY,
-        })
-        .then((client_retur: any) => {
-          return client_retur.security.encrypt(data);
-        })
-        .then((card_hash) => console.log(card_hash)); */
+        const newCard_number = data.card_number.replace(/([^0-9])/g, '');
+        const newData = { ...data, card_number: newCard_number };
 
         const client_retur = await pagarme.client
           .connect({
@@ -98,21 +126,23 @@ const Card: React.FC = () => {
             return client_;
           });
 
-        const card_hash = await client_retur.security.encrypt(data);
+        const card_hash = await client_retur.security.encrypt(newData);
 
-        const amount = 222;
+        const amount = totalProducts * 100;
         const fee = 234.23;
 
         console.log('Aqui vai ::', card_hash);
         await api.post('/orders', {
-          ...data,
+          ...newData,
           card_hash,
           fee,
           installments,
           products: cart,
           amount,
         });
-        // history.push('/');
+
+        history.push('/payment');
+        clearCart();
 
         addToast({
           type: 'success',
@@ -121,7 +151,6 @@ const Card: React.FC = () => {
             'Compra efetuada com sucesso, aguarde alguns momento para aprovação!',
         });
       } catch (err) {
-        // console.log('Error: ', err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErros(err);
           formRef.current?.setErrors(errors);
@@ -137,7 +166,16 @@ const Card: React.FC = () => {
         removeLoading();
       }
     },
-    [pagarme, cart, addToast, removeLoading, addLoading],
+    [
+      pagarme,
+      cart,
+      addToast,
+      installments,
+      removeLoading,
+      addLoading,
+      history,
+      clearCart,
+    ],
   );
 
   const handleSelectCard = useCallback(
@@ -166,16 +204,30 @@ const Card: React.FC = () => {
   const [renderInstallments, setRenderInstallments] = useState([
     { label: '', value: '' },
   ]);
+
   useEffect(() => {
     setRenderInstallments(
       [...new Array(4)].map((item, idx) => {
         const installment = idx + 1;
         return {
-          label: `${installment} x ${1100 / installment}`,
+          label: `${installment} x  ${formatPrice(
+            Number(totalProducts) / installment,
+          )}`,
           value: `${installment}`,
         };
       }),
     );
+  }, []);
+
+  const [fee, setFee] = useState<IFee>({} as IFee);
+
+  useEffect(() => {
+    async function load() {
+      const res = await api.get(`/fees/77018452`);
+      console.log('resp:::', res.data);
+      setFee(res.data);
+    }
+    load();
   }, []);
 
   function handleSelectInstallments(event: ChangeEvent<HTMLSelectElement>) {
@@ -187,68 +239,109 @@ const Card: React.FC = () => {
   return (
     <Container>
       <Header />
-      <Content>
-        <Form ref={formRef} onSubmit={handleSubmit}>
-          <PaymentTitle>Dados bancários</PaymentTitle>
-          <Payment>
-            <Select
-              name="installment"
-              label="Número de parcelas"
-              id="uf"
-              onChange={handleSelectInstallments}
-              options={renderInstallments}
-            />
-            <div className="form-area">
-              <Input
-                placeholder="Nome como está no cartão"
-                icon={FiLock}
-                name="card_holder_name"
-                label="Nome no cartão"
-                onChange={(e) => handleSelectCard}
-              />
+      <Box>
+        <Content>
+          <AnimationContainer>
+            <Form ref={formRef} onSubmit={handleSubmit}>
+              <header>
+                <p>
+                  <img src={warningIcon} alt="Aviso importante" />
+                  Importante! <br />
+                  Preencha todos os dados
+                </p>
+                <button type="submit">
+                  <span>
+                    <FiCheck />
+                  </span>
+                  <strong>Finalizar compra</strong>
+                </button>
+              </header>
 
-              <Input
-                placeholder="Número do cartão"
-                icon={FiLock}
-                name="card_number"
-                label="Número do cartão"
-              />
-              <div className="group">
-                <div>
+              <fieldset>
+                <legend>Calcular o frete</legend>
+                <CardFee>
+                  <InputMask
+                    id="idfee"
+                    mask="99.999-999"
+                    placeholder="CEP"
+                    name="fee"
+                    icon={FiLock}
+                    label="Entre com o CEP"
+                  />
+                </CardFee>
+                <span> {fee.pac}</span>
+              </fieldset>
+
+              <fieldset>
+                <legend>Dados do cartão de crédito</legend>
+
+                <InstallmentItem>
+                  <Select
+                    name="installment"
+                    label="Número de parcelas"
+                    id="idInstallment"
+                    onChange={handleSelectInstallments}
+                    options={renderInstallments}
+                  />
+                </InstallmentItem>
+                <CardItem>
                   <Input
+                    placeholder="Nome como está no cartão"
+                    name="card_holder_name"
+                    icon={FiLock}
+                    label="Nome"
+                  />
+
+                  <InputMask
+                    id="idCardNumber"
+                    mask="9999 9999 9999 9999"
+                    icon={FiLock}
+                    placeholder="Número do cartão"
+                    name="card_number"
+                    label="Número do cartão"
+                  />
+                </CardItem>
+
+                <ScheduleItem>
+                  <InputMask
+                    id="idCardExpirationDate"
+                    mask="99/99"
                     name="card_expiration_date"
                     label="Data de expiração"
                     placeholder="Data de expiração"
                     icon={FiLock}
                   />
-                </div>
-                <div>
-                  <Input
+
+                  <InputMask
+                    id="idCardCvv"
                     name="card_cvv"
+                    mask="999"
                     label="Código de segurança"
                     placeholder="CVV"
                     icon={FiLock}
                   />
-                </div>
-              </div>
-            </div>
-            <div className="credit-card">
-              <Cards
-                number={card.number}
-                name={card.holder_name}
-                expiry={card.expiration_date}
-                cvc={card.cvv}
-                focused="number"
-              />
-            </div>
-          </Payment>
-          <CheckoutButton>
-            <button type="submit" className="checkout-button">
-              Finalizar pagamento
-            </button>
-          </CheckoutButton>
-        </Form>
-      </Content>
+                </ScheduleItem>
+              </fieldset>
+              <footer>
+                <p>
+                  <img src={warningIcon} alt="Aviso importante" />
+                  Importante! <br />
+                  Preencha todos os dados
+                </p>
+              </footer>
+            </Form>
+          </AnimationContainer>
+        </Content>
+        <Background>
+          <Cards
+            number={card.number}
+            name={card.holder_name}
+            expiry={card.expiration_date}
+            cvc={card.cvv}
+            focused="number"
+          />
+        </Background>
+      </Box>
     </Container>
   );
 };

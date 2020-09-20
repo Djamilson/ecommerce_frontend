@@ -7,9 +7,11 @@ import { useToast } from './toast';
 interface CartContextData {
   cart: ProductStock[];
   addToCart(id: number): Promise<void>;
+  clearCart(): void;
   removeProduct(index: number): Promise<void>;
   updateAmount(index: number, stock: number): Promise<void>;
 }
+
 
 export interface ProductStock {
   itemProduct: {
@@ -31,6 +33,11 @@ const CartProduct: React.FC = ({ children }) => {
 
     return [] as ProductStock[];
   });
+
+  const clearCart = useCallback(() => {
+    localStorage.removeItem('@list:product');
+    setCart([] as ProductStock[]);
+  }, []);
 
   const updateSuccess = useCallback(
     async (id, stock) => {
@@ -145,6 +152,7 @@ const CartProduct: React.FC = ({ children }) => {
         addToCart,
         updateAmount,
         removeProduct,
+        clearCart,
       }}
     >
       {children}

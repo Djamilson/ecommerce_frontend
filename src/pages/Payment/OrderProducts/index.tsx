@@ -12,6 +12,8 @@ import ptBR from 'date-fns/locale/pt-BR';
 import api from '../../../_services/api';
 import Header from '../../../components/Headers/Header';
 import { useAuth } from '../../../hooks/auth';
+import { useLoading } from '../../../hooks/loading';
+import { useToast } from '../../../hooks/toast';
 import { formatPrice } from '../../../utils/format';
 import {
   Container,
@@ -67,6 +69,9 @@ interface PropsTransaction {
 
 const OrderProducts: React.FC = () => {
   const { order_id } = useParams<ParamTypes>();
+  const { addToast } = useToast();
+  const history = useHistory();
+  const { addLoading, removeLoading } = useLoading();
 
   const [order, setOrder] = useState<Order>({} as Order);
   const [transaction, setTransaction] = useState<PropsTransaction>(
@@ -174,6 +179,37 @@ const OrderProducts: React.FC = () => {
     );
   }, [order_id]); */
 
+  const handlerCanceledTransaction = useCallback(
+    async (id: string) => {
+      try {
+        addLoading({
+          loading: true,
+          description: 'Aguarde ...',
+        });
+
+        console.log('Meus dados: para salvar', id);
+        await api.delete(`/transactions/${id}`);
+        // history.push('/');
+
+        addToast({
+          type: 'success',
+          title: 'Informações cadastrada!',
+          description: 'Dados inseridos com sucesso!',
+        });
+      } catch (err) {
+        addToast({
+          type: 'error',
+          title: 'Falha no cadastro!',
+          description:
+            'Ocorreu uma falha ao tentar fazer o cadastro, tente novamente!',
+        });
+      } finally {
+        removeLoading();
+      }
+    },
+    [addToast, addLoading, removeLoading],
+  );
+
   return (
     <Container>
       <Header />
@@ -241,7 +277,10 @@ const OrderProducts: React.FC = () => {
         </TransactionsTable>
 
         <footer>
-          <button type="button" onClick={() => {}} disabled={false}>
+          <button
+            type="button"
+            onClick={() => handlerCanceledTransaction(transaction.id)}
+          >
             Cancelar pedido
           </button>
 

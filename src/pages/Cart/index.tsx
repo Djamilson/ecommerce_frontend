@@ -131,7 +131,7 @@ const Cart: React.FC = () => {
 
         <footer>
           <button type="button" onClick={handlePayment}>
-            Finalizar pedido
+            Fechar pedido
           </button>
 
           <Total>

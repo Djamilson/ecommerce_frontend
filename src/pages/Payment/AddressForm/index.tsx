@@ -259,8 +259,6 @@ const AddressForm: React.FC = () => {
     [phoneItems],
   );
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
-
   const handleIsValideDate = useCallback(
     (e) => {
       const parsedDate = isDate(e.target.value)

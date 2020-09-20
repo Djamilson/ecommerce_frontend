@@ -1,182 +1,287 @@
 import { darken } from 'polished';
+import { shade } from 'polished';
 import styled, { keyframes } from 'styled-components';
+
+import { colors } from '../../../styles';
 
 export const Container = styled.div`
   margin: 0 3rem;
   margin-top: 1rem;
 `;
 
-export const Content = styled.div`
-  margin-top: 30px;
-`;
-
-export const CheckoutButton = styled.div`
+export const Box = styled.div`
+  margin-top: 5rem;
+  height: 100vh;
   display: flex;
+  align-items: stretch;
+`;
 
-  justify-content: flex-start;
-  margin-top: 50px;
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  .checkout-button {
-    width: 200px;
-    height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    align-self: center;
-    background: #7159c1;
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
+  place-content: center;
 
-    &:hover {
-      background: ${darken(0.03, '#7159c1')};
-    }
+  width: 100%;
+  max-width: 700px;
+`;
+
+const appearFromLeft = keyframes`
+  from{
+    opacity:0;
+    transform: translateX(-50px);
+  }
+  to{
+    opacity:1;
+    transform: translateX(0px)
   }
 `;
 
-export const Address = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-column-gap: 20px;
+export const AnimationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: ${appearFromLeft} 1s;
 
-  h3 {
-    color: #ffffff;
-    margin-top: 25px;
-    margin-bottom: 25px;
+  form {
+    background: ${colors.colorBoxBase};
+    width: 50rem;
+    margin-top: 8rem;
     text-align: center;
-  }
+    max-width: 34rem;
+    border-radius: 0.8rem;
 
-  label {
-    display: block;
-    color: #87868b;
-    font-size: 14px;
-    font-weight: bold;
-  }
+    overflow: hidden;
 
-  input {
-    width: 100%;
-    background: #19181f;
-    border: 2px solid #25242c;
-    border-radius: 5px;
-    padding: 15px 21px;
-    margin-top: 8px;
-    font-size: 14px;
-    margin-bottom: 15px;
-    color: #ffffff;
-  }
-`;
+    header {
+      background: ${colors.colorBoxFooter};
+      border-bottom: 1px solid ${colors.colorLineInWhite};
+      width: 85vw;
+      height: 2.5rem;
 
-export const PaymentTitle = styled.h3`
-  color: #ffffff;
-  margin-top: 25px;
-  margin-bottom: 25px;
-  text-align: center;
-`;
+      margin-top: -0.4rem;
+      margin-bottom: 5rem;
+      margin-left: -16.4rem;
 
-export const Payment = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  grid-column-gap: 20px;
-  grid-template-areas:
-    'header header'
-    'header header'
-    'main sidebar';
-
-  .cards {
-    grid-area: header;
-  }
-
-  .save-card {
-    display: flex;
-
-    align-items: center;
-    justify-content: flex-start;
-    padding: 10px 0;
-    font-size: 13px;
-    color: #ffffff;
-
-    input {
-      margin-right: 5px;
-    }
-  }
-
-  .form-area {
-    grid-area: main;
-    & > label,
-    div.group label {
-      display: block;
-      color: #87868b;
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    & > input,
-    div.group input {
-      width: 100%;
-      background: #19181f;
-      border: 2px solid #25242c;
-      border-radius: 5px;
-      padding: 15px 21px;
-      margin-top: 8px;
-      font-size: 14px;
-      margin-bottom: 15px;
-      color: #ffffff;
-    }
-
-    .group {
-      width: 100%;
-      display: grid;
-      grid-template-columns: auto auto;
-      grid-column-gap: 20px;
-
-      div {
+      @media (min-width: 700px) {
+        padding: 3rem 1rem;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      p {
+        @media (min-width: 700px) {
+          margin-left: 19rem;
+          justify-content: space-between;
+        }
+      }
+
+      button {
+        @media (min-width: 700px) {
+          margin: 0 6rem 0 0;
+          width: 23%;
+        }
+        width: 35%;
+        height: 2.8rem;
+        background: ${colors.colorSecundary};
+        color: ${colors.colorButtonText};
+        border: 0;
+        border-radius: 0.4rem;
+
+        font: 700 1rem Archivo;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: background-color 0.2s;
+
+        span {
+          display: block;
+          background: rgba(0, 0, 0, 0.08);
+          width: 52px;
+          height: 2.8rem;
+          border-radius: 0.6rem 0 0 0.6rem;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background-color 0.2s;
+          svg {
+            color: #fff;
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        strong {
+          flex: 1;
+          text-align: center;
+          color: #fff;
+        }
+
+        &:hover {
+          background: ${shade(0.2, `${colors.colorSecundary}`)};
+        }
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        line-height: 1.6rem;
+        color: ${colors.colorTextcomplement};
+
+        img {
+          margin-right: 1rem;
+        }
+      }
+    }
+
+    fieldset {
+      border: 0;
+      padding: 2rem 2rem 2rem 1rem;
+      margin-top: -3.5rem;
+
+      legend {
+        font: 700 1.3rem Archivo;
+        color: ${colors.colorTextTitle};
+        margin-bottom: 1.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        border-bottom: 1px solid ${colors.colorLineInWhite};
+
+        button {
+          width: 35%;
+          height: 2.8rem;
+          background: ${colors.colorSecundary};
+          color: ${colors.colorButtonText};
+          border: 0;
+          border-radius: 0.4rem;
+
+          font: 700 1.1rem Archivo;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          transition: background-color 0.2s;
+          margin-top: 0.2rem;
+          margin-bottom: 1.2rem;
+
+          span {
+            display: block;
+            background: rgba(0, 0, 0, 0.08);
+            width: 52px;
+            height: 2.8rem;
+            border-radius: 0.6rem 0 0 0.6rem;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+            svg {
+              color: #fff;
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          strong {
+            flex: 1;
+            text-align: center;
+            color: #fff;
+          }
+
+          &:hover {
+            background: ${shade(0.2, `${colors.colorSecundary}`)};
+          }
+        }
+      }
+    }
+
+    fieldset + fieldset {
+      margin-top: -3.4rem;
+    }
+
+    footer {
+      width: 85vw;
+      margin-left: -6.4rem;
+      padding: 0rem 2.4rem;
+      background: ${colors.colorBoxFooter};
+      border-top: 1px solid ${colors.colorLineInWhite};
+      margin-top: -2.4rem;
+
+      @media (min-width: 700px) {
+        padding: 1rem 10.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      p {
+        @media (min-width: 700px) {
+          justify-content: space-between;
+        }
+      }
+
+      p {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        line-height: 1.4rem;
+        color: ${colors.colorTextcomplement};
+
+        img {
+          margin-right: 2rem;
+        }
       }
     }
   }
+`;
 
-  .credit-card {
-    display: flex;
-    align-items: center;
-    grid-area: sidebar;
+export const Background = styled.div`
+  display: flex;
+  align-content: center;
+  align-items: center;
+`;
+export const CardItem = styled.div`
+  @media (min-width: 700px) {
+    margin-top: -1.6rem;
+    width: 82%;
+  }
+`;
+export const CardFee = styled.div`
+  @media (min-width: 700px) {
+    margin-top: -3rem;
+    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: 65% 25%;
+    column-gap: 0.2rem;
   }
 `;
 
-const loadingAnimation = keyframes`
-  0%, 100% {
-    transform: scale(0.0);
+export const InstallmentItem = styled.div`
+  @media (min-width: 700px) {
+    margin-top: -3rem;
+    margin-left: 0.7rem;
+    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: 65% 35%;
+    column-gap: 0.1rem;
   }
-
-  50% {
-    transform: scale(1.0);
-  }
-}`;
-
-export const Loading = styled.span`
-  width: 20px;
-  height: 20px;
-  position: relative;
-
-  &::before,
-  &::after {
-    content: '';
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: #fff;
-    opacity: 0.3;
-    position: absolute;
-    top: 0;
-    left: 0;
-
-    animation: ${loadingAnimation} 2s infinite ease-in-out;
-  }
-
-  &::after {
-    animation-delay: -1s;
+`;
+export const ScheduleItem = styled.div`
+  @media (min-width: 700px) {
+    margin-top: -0.4rem;
+    margin-bottom: 3rem;
+    padding-right: 7rem;
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    column-gap: 0.1rem;
   }
 `;
