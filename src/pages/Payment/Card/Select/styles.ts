@@ -16,7 +16,7 @@ export const SelectBlock = styled.div`
     color: ${colors.colorTextcomplement};
     font-weight: bold;
     margin-bottom: 0.2rem;
-    margin-right: 16.9rem;
+    margin-right: 12.9rem;
   }
 
   select {

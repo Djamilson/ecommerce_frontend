@@ -1,8 +1,11 @@
-import { darken } from 'polished';
 import { shade } from 'polished';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 
 import { colors } from '../../../styles';
+
+interface ContainerProps {
+  hasSelected: number;
+}
 
 export const Container = styled.div`
   margin: 0 3rem;
@@ -47,7 +50,7 @@ export const AnimationContainer = styled.div`
   form {
     background: ${colors.colorBoxBase};
     width: 50rem;
-    margin-top: 8rem;
+    margin-top: 15rem;
     text-align: center;
     max-width: 34rem;
     border-radius: 0.8rem;
@@ -78,7 +81,7 @@ export const AnimationContainer = styled.div`
         }
       }
 
-      button {
+      > button {
         @media (min-width: 700px) {
           margin: 0 6rem 0 0;
           width: 23%;
@@ -154,52 +157,6 @@ export const AnimationContainer = styled.div`
         justify-content: space-between;
         width: 100%;
         border-bottom: 1px solid ${colors.colorLineInWhite};
-
-        button {
-          width: 35%;
-          height: 2.8rem;
-          background: ${colors.colorSecundary};
-          color: ${colors.colorButtonText};
-          border: 0;
-          border-radius: 0.4rem;
-
-          font: 700 1.1rem Archivo;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-decoration: none;
-          transition: background-color 0.2s;
-          margin-top: 0.2rem;
-          margin-bottom: 1.2rem;
-
-          span {
-            display: block;
-            background: rgba(0, 0, 0, 0.08);
-            width: 52px;
-            height: 2.8rem;
-            border-radius: 0.6rem 0 0 0.6rem;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.2s;
-            svg {
-              color: #fff;
-              width: 20px;
-              height: 20px;
-            }
-          }
-
-          strong {
-            flex: 1;
-            text-align: center;
-            color: #fff;
-          }
-
-          &:hover {
-            background: ${shade(0.2, `${colors.colorSecundary}`)};
-          }
-        }
       }
     }
 
@@ -252,9 +209,59 @@ export const Background = styled.div`
 export const CardItem = styled.div`
   @media (min-width: 700px) {
     margin-top: -1.6rem;
-    width: 82%;
+    width: 76%;
+    max-width: 76%;
+    padding-right: 1rem;
   }
 `;
+
+export const CardFeeSelect = styled.div`
+  @media (min-width: 700px) {
+    margin-top: -2rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem 0 2rem;
+    display: grid;
+    grid-template-columns: 2fr 2fr;
+    column-gap: 0.1rem;
+    section {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      span {
+        display: block;
+        background: rgba(0, 0, 0, 0.08);
+        width: 52px;
+        height: 2.8rem;
+        border-radius: 0.6rem 0 0 0.6rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+        svg {
+          color: #fff;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      strong {
+        flex: 1;
+        text-align: center;
+        color: #fff;
+      }
+    }
+  }
+`;
+
 export const CardFee = styled.div`
   @media (min-width: 700px) {
     margin-top: -4rem;
@@ -263,61 +270,6 @@ export const CardFee = styled.div`
     display: grid;
     grid-template-columns: 2fr 2fr;
     column-gap: 0.1rem;
-    section {
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      margin-top: 55px;
-      button + button {
-      }
-
-      button {
-        width: 65%;
-        height: 2.4rem;
-        margin-right: 5px;
-        background: ${colors.colorSecundary};
-        color: ${colors.colorButtonText};
-        border: 0;
-        border-radius: 0.4rem;
-
-        font: 700 0.8rem Archivo;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        transition: background-color 0.2s;
-        margin-top: 0.2rem;
-        margin-bottom: 1.2rem;
-
-        span {
-          display: block;
-          background: rgba(0, 0, 0, 0.08);
-          width: 52px;
-
-          height: 2.4rem;
-          border-radius: 0.6rem 0 0 0.6rem;
-
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background-color 0.2s;
-        }
-
-        strong {
-          flex: 1;
-          text-align: center;
-          color: #fff;
-
-          padding: 0 0.5rem;
-        }
-
-        &:hover {
-          background: ${shade(0.2, `${colors.colorSecundary}`)};
-        }
-      }
-    }
   }
 `;
 
@@ -332,12 +284,114 @@ export const InstallmentItem = styled.div`
   }
 `;
 export const ScheduleItem = styled.div`
+  padding-right: 1rem;
   @media (min-width: 700px) {
     margin-top: -0.4rem;
     margin-bottom: 3rem;
-    padding-right: 7rem;
+
     display: grid;
-    grid-template-columns: 2fr 2fr;
+    grid-template-columns: 46% 46%;
     column-gap: 0.1rem;
+  }
+`;
+
+export const ButtonFeePac = styled.button<ContainerProps>`
+  height: 2.4rem;
+  margin-right: 5px;
+  background: ${(props) =>
+    props.hasSelected ? colors.colorSecundary : colors.colorPrimary};
+  color: ${colors.colorButtonText};
+  border: 0;
+  border-radius: 0.4rem;
+
+  ${(props) =>
+    props.hasSelected &&
+    css`
+      align-items: center;
+      border: 1px solid #000;
+    `}
+
+  font: 700 0.8rem Archivo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  margin-top: 0.2rem;
+  margin-bottom: 1.2rem;
+
+  span {
+    display: block;
+    background: rgba(0, 0, 0, 0.08);
+    width: 52px;
+
+    height: 2.4rem;
+    border-radius: 0.6rem 0 0 0.6rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+
+  strong {
+    flex: 1;
+    text-align: center;
+    color: #fff;
+
+    padding: 0 0.5rem;
+  }
+
+  &:hover {
+    background: ${shade(0.2, `${colors.colorSecundary}`)};
+  }
+`;
+
+export const ButtonFeeSedex = styled.button<ContainerProps>`
+  color: ${colors.colorButtonText};
+  border: 0;
+  height: 2.4rem;
+  border-radius: 0.4rem;
+  background: ${(props) =>
+    props.hasSelected ? colors.colorSecundary : colors.colorPrimary};
+
+  ${(props) =>
+    props.hasSelected &&
+    css`
+      align-items: center;
+      border: 1px solid #000;
+    `}
+
+  font: 700 1.1rem Archivo;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  margin-top: 0.2rem;
+  margin-bottom: 1.2rem;
+
+  span {
+    display: block;
+    background: rgba(0, 0, 0, 0.08);
+    width: 52px;
+
+    height: 2.4rem;
+    border-radius: 0.6rem 0 0 0.6rem;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+  }
+
+  strong {
+    flex: 1;
+    text-align: center;
+    color: #fff;
+  }
+
+  &:hover {
+    background: ${shade(0.2, `${colors.colorSecundary}`)};
   }
 `;

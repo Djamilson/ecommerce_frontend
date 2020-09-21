@@ -47,6 +47,9 @@ import {
   ScheduleItem,
   InstallmentItem,
   CardFee,
+  ButtonFeePac,
+  ButtonFeeSedex,
+  CardFeeSelect,
 } from './styles';
 
 interface SignUpFormData {
@@ -105,6 +108,12 @@ const Card: React.FC = () => {
 
         const schema = Yup.object().shape({
           card_holder_name: Yup.string().required('Nome obrigatório'),
+
+          card_number: Yup.string().required('Número do cartão obrigatório'),
+          card_expiration_date: Yup.string().required(
+            'Data de expiração obrigatório',
+          ),
+          card_cvv: Yup.string().required('Código de segurança obrigatório'),
         });
 
         await schema.validate(data, {
@@ -201,6 +210,22 @@ const Card: React.FC = () => {
     [setCard],
   );
 
+  const [fee, setFee] = useState<IFee>({ pac: '', sedex: '' } as IFee);
+  const [selectedFee, setSelectedFee] = useState('');
+  const [selectButtonPac, setSelectButtonPac] = useState(true);
+  const [selectButtonSedex, setSelectButtonSedex] = useState(!selectButtonPac);
+
+  useEffect(() => {
+    async function load() {
+      const res = await api.get(`/fees/77018452`);
+      console.log('resp::: fee', res.data);
+      const { pac } = res.data;
+      setFee(res.data);
+      setSelectedFee(pac);
+    }
+    load();
+  }, []);
+
   const [renderInstallments, setRenderInstallments] = useState([
     { label: '', value: '' },
   ]);
@@ -209,26 +234,16 @@ const Card: React.FC = () => {
     setRenderInstallments(
       [...new Array(4)].map((item, idx) => {
         const installment = idx + 1;
+
         return {
           label: `${installment} x  ${formatPrice(
-            Number(totalProducts) / installment,
+            Number(totalProducts + selectedFee) / installment,
           )}`,
           value: `${installment}`,
         };
       }),
     );
-  }, []);
-
-  const [fee, setFee] = useState<IFee>({ pac: '', sedex: '' } as IFee);
-
-  useEffect(() => {
-    async function load() {
-      const res = await api.get(`/fees/77018452`);
-      console.log('resp::: fee', res.data);
-      setFee(res.data);
-    }
-    load();
-  }, []);
+  }, [selectedFee, totalProducts]);
 
   function handleSelectInstallments(event: ChangeEvent<HTMLSelectElement>) {
     const { value } = event.target;
@@ -245,6 +260,26 @@ const Card: React.FC = () => {
     [fee],
   );
 
+  const formatSelectedFee = useMemo(
+    () => selectedFee !== '' && formatPrice(Number(selectedFee)),
+    [selectedFee],
+  );
+
+  const handleSelectedFeePac = useCallback(() => {
+    console.log('Meus dados: para pac', fee.pac);
+    setSelectedFee(fee.pac);
+
+    setSelectButtonSedex(!selectButtonPac);
+    setSelectButtonPac(selectButtonPac);
+  }, [fee.pac]);
+
+  const handleSelectedFeeSedex = useCallback(() => {
+    console.log('Meus dados: para sedex', fee.sedex);
+    setSelectedFee(fee.sedex);
+
+    setSelectButtonSedex(selectButtonPac);
+    setSelectButtonPac(!selectButtonPac);
+  }, [fee.pac]);
   return (
     <Container>
       <Header />
@@ -267,7 +302,7 @@ const Card: React.FC = () => {
               </header>
 
               <fieldset>
-                <legend>Calcular o fretejjj</legend>
+                <legend>Calcular o frete</legend>
                 <CardFee>
                   <InputMask
                     id="idfee"
@@ -277,17 +312,34 @@ const Card: React.FC = () => {
                     icon={FiLock}
                     label="Entre com o CEP"
                   />
-                  <section>
-                    <button type="button">
-                      <span>Sedex</span>
-                      <strong>{handleFeeSedex}</strong>
-                    </button>
-                    <button type="button">
-                      <span>Pac</span>
-                      <strong>{handleFeePac}</strong>
-                    </button>
-                  </section>
                 </CardFee>
+              </fieldset>
+
+              <fieldset>
+                <legend>
+                  Frete selecionado
+                  {formatSelectedFee}
+                </legend>
+                <CardFeeSelect>
+                  <ButtonFeePac
+                    hasSelected={Number(selectButtonPac)}
+                    type="button"
+                    disabled={selectButtonPac}
+                    onClick={handleSelectedFeePac}
+                  >
+                    <span>Pac</span>
+                    <strong>{handleFeePac}</strong>
+                  </ButtonFeePac>
+                  <ButtonFeeSedex
+                    type="button"
+                    hasSelected={Number(selectButtonSedex)}
+                    disabled={selectButtonSedex}
+                    onClick={handleSelectedFeeSedex}
+                  >
+                    <span>Sedex</span>
+                    <strong>{handleFeeSedex}</strong>
+                  </ButtonFeeSedex>
+                </CardFeeSelect>
               </fieldset>
 
               <fieldset>
