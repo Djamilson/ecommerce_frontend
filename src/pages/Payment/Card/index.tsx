@@ -219,12 +219,12 @@ const Card: React.FC = () => {
     );
   }, []);
 
-  const [fee, setFee] = useState<IFee>({} as IFee);
+  const [fee, setFee] = useState<IFee>({ pac: '', sedex: '' } as IFee);
 
   useEffect(() => {
     async function load() {
       const res = await api.get(`/fees/77018452`);
-      console.log('resp:::', res.data);
+      console.log('resp::: fee', res.data);
       setFee(res.data);
     }
     load();
@@ -235,6 +235,15 @@ const Card: React.FC = () => {
     console.log('Selecionou o numero de parcelas ', value);
     setInstallments(Number(value));
   }
+
+  const handleFeePac = useMemo(
+    () => fee.pac !== '' && formatPrice(Number(fee.pac)),
+    [fee],
+  );
+  const handleFeeSedex = useMemo(
+    () => fee.sedex !== '' && formatPrice(Number(fee.sedex)),
+    [fee],
+  );
 
   return (
     <Container>
@@ -258,7 +267,7 @@ const Card: React.FC = () => {
               </header>
 
               <fieldset>
-                <legend>Calcular o frete</legend>
+                <legend>Calcular o fretejjj</legend>
                 <CardFee>
                   <InputMask
                     id="idfee"
@@ -268,8 +277,17 @@ const Card: React.FC = () => {
                     icon={FiLock}
                     label="Entre com o CEP"
                   />
+                  <section>
+                    <button type="button">
+                      <span>Sedex</span>
+                      <strong>{handleFeeSedex}</strong>
+                    </button>
+                    <button type="button">
+                      <span>Pac</span>
+                      <strong>{handleFeePac}</strong>
+                    </button>
+                  </section>
                 </CardFee>
-                <span> {fee.pac}</span>
               </fieldset>
 
               <fieldset>
